@@ -1,0 +1,1185 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GUN² Math Hunter</title>
+<script defer src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script><style>
+*{box-sizing:border-box}body{margin:0;background:#050914;color:#eef4ff;font:16px Arial,sans-serif}.wrap{max-width:1100px;margin:auto;padding:20px}.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{font-size:28px;font-weight:900}.brand b{color:#22d3ee}.pill,.card,.mode,.ans,.inv{background:#0d1729;border:1px solid #263653;border-radius:14px}.pill{display:inline-block;padding:9px 12px}.layout{display:grid;grid-template-columns:1.4fr .8fr;gap:15px;margin-top:18px}.card{padding:18px}.hero{min-height:280px;background:radial-gradient(circle at 80% 20%,#164e63 0,#0d1729 35%,#08101e 100%)}h1{font-size:42px;margin:8px 0}.cyan{color:#22d3ee}.muted{color:#91a4c4}.modes,.answers,.loot,.invgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode,.ans{color:#eef4ff;padding:15px;text-align:left;cursor:pointer}.mode:hover,.ans:hover{border-color:#22d3ee;transform:translateY(-2px)}.screen{display:none}.screen.active{display:block}.back{padding:9px 12px;border-radius:10px;border:1px solid #263653;background:#0d1729;color:#fff;cursor:pointer}.fight{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px;align-items:center}.fighter{text-align:center;padding:12px}.avatar{font-size:64px}.hp{height:12px;background:#29344b;border-radius:20px;overflow:hidden}.hp i{display:block;height:100%;background:linear-gradient(90deg,#ef4444,#fb7185);width:100%}.boss{text-align:center;font-size:72px}.answerTimer{margin:8px auto 12px;text-align:center;font-weight:900;font-size:22px;color:#22d3ee;letter-spacing:1px}.answerTimer.warning{color:#f59e0b}.answerTimer.danger{color:#ef4444;animation:pulse .7s infinite alternate}@keyframes pulse{to{transform:scale(1.06)}}
+.question{text-align:center;font-size:24px;font-weight:800;padding:18px;margin:14px 0;background:#07101e;border:1px solid #263653;border-radius:14px}.log{text-align:center;min-height:32px;margin:10px}.inv{padding:12px}.rarW{color:#ddd}.rarG{color:#4ade80}.rarB{color:#60a5fa}.rarP{color:#c084fc}.rarY{color:#facc15}.rarO{color:#fb923c} .rarR{color:#ff4757}.rarV{color:#f472b6;text-shadow:0 0 8px rgba(244,114,182,.55)}.elemental{font-weight:800}.dmgFloat{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:20;pointer-events:none;font-weight:900;font-size:22px;text-shadow:0 2px 5px #000;animation:dmgFloat .85s ease-out forwards}.battleCenter{position:relative}.statwide{grid-column:1 / -1}.stat.elementStat{min-height:72px}.elementGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}.elementTag{font-size:13px;font-weight:700}.element-fire{color:#ef4444}.element-lightning{color:#a855f7}.element-ice{color:#67e8f9}.element-water{color:#2563eb}.element-wind{color:#7dd3fc}.element-grass{color:#16a34a}.element-earth{color:#a16207}@keyframes dmgFloat{0%{opacity:0;transform:translate(-50%,0) scale(.8)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-65px) scale(1.08)}}.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#07111f;border:1px solid #22d3ee;padding:12px 18px;border-radius:999px;opacity:0;transition:.2s}.toast.show{opacity:1}.onlineTeam{display:none;grid-column:1 / -1;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}.onlineTeam.show{display:grid}.teamcard{padding:10px;border:1px solid #263653;border-radius:12px;background:#0b1424;text-align:center}.teamcard.dead{opacity:.6;filter:grayscale(.6)}.reviveBox{margin-top:8px;padding:10px;border:1px solid #f59e0b;border-radius:12px;background:#21170a}.reviveBox button{margin-top:7px;padding:9px 12px;border-radius:10px;border:1px solid #f59e0b;background:#30200b;color:#fff;cursor:pointer}.stageMoney{display:inline-block;margin:8px auto;padding:8px 12px;border:1px solid #263653;border-radius:999px;background:#0d1729}.deadOverlay{display:none;position:fixed;inset:0;background:rgba(2,6,14,.82);z-index:50;align-items:center;justify-content:center}.deadOverlay.show{display:flex}.deadBox{width:min(440px,90vw);padding:24px;border:1px solid #f59e0b;border-radius:18px;background:#0d1729;text-align:center}.deadBox button{padding:12px 18px;border-radius:10px;border:1px solid #22d3ee;background:#10243a;color:#fff;cursor:pointer}@media(max-width:800px){.layout,.fight{grid-template-columns:1fr}h1{font-size:32px}}@media(max-width:500px){.modes,.answers,.loot,.invgrid{grid-template-columns:1fr}}
+
+.campaign{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+.stage{min-height:92px;border:1px solid #263653;background:#101c31;color:#eef4ff;border-radius:14px;padding:12px;cursor:pointer;text-align:left}
+.stage:hover{border-color:#22d3ee}.stage.locked{opacity:.38;filter:grayscale(1);cursor:not-allowed}.stage.done{background:#080d17;opacity:.55;filter:grayscale(.75)}
+.stage b{font-size:18px}.stage small{display:block;color:#91a4c4;margin-top:7px}
+.shopgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.profilegrid{display:grid;grid-template-columns:.9fr 1.1fr;gap:14px;margin-top:14px}.charbox,.equipbox{background:#081221;border:1px solid #263653;border-radius:16px;padding:16px}.charavatar{font-size:76px;text-align:center}.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.stat{padding:10px;border:1px solid #263653;border-radius:10px;background:#0d1729}.equipgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}.equip{min-height:125px;border:1px solid #263653;border-radius:13px;background:#0d1729;color:#eef4ff;padding:10px;text-align:center;cursor:pointer}.equip:hover{border-color:#22d3ee;transform:translateY(-2px)}.equip .sloticon{font-size:32px}.equip small{display:block;color:#91a4c4;margin-top:6px}.equip .equipped{font-size:13px;margin-top:7px}.vaulthead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.vaultfilter{margin-top:14px}.gearcard.clickable{cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+.gearcard.clickable:hover{transform:translateY(-2px);border-color:#38bdf8;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.gearcard{padding:12px;border:1px solid #263653;border-radius:12px;background:#091221}.gearcard button{margin-top:8px;width:100%;padding:9px;border-radius:9px;border:1px solid #315070;background:#102039;color:#fff;cursor:pointer}.gearcard button:hover{border-color:#22d3ee}.shopitem{transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;}
+.shopitem:hover{transform:translateY(-2px);border-color:#38bdf8;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.shopitem{padding:12px;border:1px solid #263653;border-radius:12px;background:#091221}.battletools{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px}.bagbtn{padding:10px 14px;border-radius:10px;border:1px solid #315070;background:#0d1729;color:#fff;cursor:pointer}.bagbtn:hover{border-color:#22d3ee}.backpackgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.bpitem{padding:12px;border:1px solid #263653;border-radius:12px;background:#091221}.bpitem button{margin-top:8px;width:100%;padding:8px;border-radius:9px;border:1px solid #315070;background:#102039;color:#fff;cursor:pointer}.bpitem button:hover{border-color:#22d3ee}@media(max-width:600px){.backpackgrid{grid-template-columns:1fr 1fr}}
+.shopitem button{margin-top:8px;width:100%;padding:9px;border-radius:9px;border:1px solid #315070;background:#102039;color:#fff;cursor:pointer}
+.shopitem button:hover{border-color:#22d3ee}.shopTimer{font-size:14px;color:#91a4c4}
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}}.modal#gearDetailModal{z-index:30}.modal.show{display:flex}.modalbox{width:min(720px,100%);max-height:85vh;overflow:auto;background:#0b1526;border:1px solid #2b3e5d;border-radius:18px;padding:18px}.effectgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.effectcard{border:1px solid #263653;background:#0d1729;color:#eef4ff;border-radius:14px;padding:15px;text-align:left;cursor:pointer;min-height:120px}.effectcard:hover{border-color:#22d3ee;transform:translateY(-2px)}.effectcard.selected{border-color:#22d3ee;box-shadow:0 0 0 2px #22d3ee33;background:#10243a}.effectcard b{display:block;font-size:18px;margin-bottom:7px}.effectcard small{color:#91a4c4;line-height:1.4}.effectcheck{float:right;font-size:20px}@media(max-width:600px){.effectgrid{grid-template-columns:1fr}}
+@media(max-width:900px){.equipgrid{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){.campaign{grid-template-columns:repeat(2,1fr)}.shopgrid{grid-template-columns:1fr}.profilegrid{grid-template-columns:1fr}.equipgrid{grid-template-columns:repeat(2,1fr)}}
+
+.onlineModes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.onlinePanel{margin-top:14px;padding:14px;border:1px solid #263653;border-radius:14px;background:#091221}.roomrow{display:flex;gap:8px;flex-wrap:wrap}.roomrow input{flex:1;min-width:180px;padding:12px;border-radius:10px;border:1px solid #263653;background:#0d1729;color:#eef4ff}.roomstatus{margin-top:12px}.players{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.playercard{padding:12px;border:1px solid #263653;border-radius:12px;background:#0d1729}.playercard.me{border-color:#22d3ee}.votegrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.voteCard{padding:14px;border:1px solid #263653;border-radius:12px;background:#0d1729;color:#eef4ff;cursor:pointer;text-align:left}.voteCard.selected{border-color:#22d3ee;background:#10243a}.voteCount{font-size:13px;color:#91a4c4;margin-top:5px}.onlineTools{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}@media(max-width:600px){.onlineModes,.players,.votegrid{grid-template-columns:1fr}}
+.setBonusWrap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px;width:100%}
+.setBonus{padding:8px 10px;border:1px solid #263653;border-radius:10px;background:#0d1729;display:flex;flex-direction:column;gap:3px}
+.setBonus small{color:#9db0cf}.setBonus strong{font-size:11px}.elementTag{display:inline-flex;align-items:center;gap:4px;margin:2px 4px 2px 0}
+@media(max-width:700px){.setBonusWrap{grid-template-columns:1fr}}
+
+.geardetail{max-width:520px}.geardetailhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.geardetailbody{margin-top:16px;padding:16px;border:1px solid #263653;border-radius:14px;background:#091221}.gearbigicon{text-align:center;font-size:64px;margin-bottom:8px}.gearstatlist{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gearstatrow{padding:10px;border:1px solid #263653;border-radius:10px;background:#0d1729}.geardetailactions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.geardetailactions button{padding:11px;border-radius:10px;border:1px solid #315070;background:#102039;color:#fff;cursor:pointer}.geardetailactions button:hover{border-color:#22d3ee}.geardetailactions .danger{border-color:#ef4444;background:#241018}.geardetailactions .fusion{border-color:#facc15;background:#29220a}.fusionhint{margin-top:12px;padding:10px;border:1px dashed #475569;border-radius:10px;color:#cbd5e1}@media(max-width:600px){.gearstatlist,.geardetailactions{grid-template-columns:1fr}}
+.special-effect-line{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--special-effect-color);background:rgba(255,255,255,.035);box-shadow:0 0 14px color-mix(in srgb,var(--special-effect-color) 20%,transparent);color:var(--special-effect-color);font-size:13px;line-height:1.45}.special-effect-line .special-effect-label{display:block;font-size:11px;letter-spacing:.08em;opacity:.82;margin-bottom:3px}.special-effect-line b{display:block;font-size:15px;margin-bottom:2px}
+</style>
+<style>
+/* Combat VFX */
+.battleCenter.vfx-shake{animation:vfxShake .34s ease-in-out}
+#enemy.vfx-hit{animation:vfxHit .26s ease-out}
+#enemy.vfx-crit{animation:vfxCrit .48s ease-out}
+#enemy.vfx-stun{animation:vfxStun .75s ease-in-out;filter:drop-shadow(0 0 14px #a855f7)}
+#enemy.vfx-ice{animation:vfxIce .75s ease-out;filter:drop-shadow(0 0 18px #67e8f9)}
+#enemy.vfx-fire{animation:vfxFire .5s ease-out;filter:drop-shadow(0 0 20px #ef4444)}
+#enemy.vfx-earth{animation:vfxEarth .6s ease-out;filter:drop-shadow(0 0 18px #a16207)}
+#enemy.vfx-wind{animation:vfxWind .55s ease-out;filter:drop-shadow(0 0 18px #7dd3fc)}
+#enemy.vfx-water{animation:vfxWater .65s ease-out;filter:drop-shadow(0 0 18px #38bdf8)}
+#enemy.vfx-grass{animation:vfxGrass .65s ease-out;filter:drop-shadow(0 0 18px #22c55e)}
+.vfx-particle{position:absolute;left:50%;top:44%;pointer-events:none;z-index:30;font-size:20px;animation:vfxParticle .75s ease-out forwards;filter:drop-shadow(0 0 7px currentColor)}
+.vfx-ring{position:absolute;left:50%;top:42%;width:28px;height:28px;border:3px solid #fff;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:29;animation:vfxRing .55s ease-out forwards}
+.vfx-banner{position:absolute;left:50%;top:24%;transform:translate(-50%,-50%) scale(.75);opacity:0;z-index:31;pointer-events:none;font-weight:1000;font-size:25px;letter-spacing:1px;text-shadow:0 3px 12px #000,0 0 18px currentColor;white-space:nowrap;animation:vfxBanner .9s ease-out forwards}
+.vfx-banner.fire{color:#fb7185}.vfx-banner.ice{color:#67e8f9}.vfx-banner.lightning{color:#c084fc}.vfx-banner.water{color:#38bdf8}.vfx-banner.wind{color:#7dd3fc}.vfx-banner.grass{color:#4ade80}.vfx-banner.earth{color:#d6a15d}.vfx-banner.gold{color:#facc15}
+.vfx-shield{position:absolute;left:50%;top:50%;width:150px;height:150px;border:3px solid #d6a15d;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:18;box-shadow:0 0 25px #a16207, inset 0 0 25px #a16207;animation:vfxShield 1.1s ease-out forwards}
+.vfx-heal{position:absolute;left:50%;top:60%;pointer-events:none;z-index:30;font-weight:900;color:#4ade80;text-shadow:0 2px 7px #000;animation:vfxHeal .9s ease-out forwards}
+@keyframes vfxShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@keyframes vfxHit{0%{transform:scale(1)}45%{transform:scale(1.16) rotate(-3deg)}100%{transform:scale(1)}}
+@keyframes vfxCrit{0%{transform:scale(1);filter:drop-shadow(0 0 0 #fff)}35%{transform:scale(1.3) rotate(4deg);filter:drop-shadow(0 0 28px #facc15)}100%{transform:scale(1)}}
+@keyframes vfxStun{0%,100%{transform:translateY(0)}25%{transform:translateY(-5px) rotate(-5deg)}50%{transform:translateY(0) rotate(5deg)}75%{transform:translateY(-4px) rotate(-3deg)}}
+@keyframes vfxIce{0%{transform:scale(1)}50%{transform:scale(1.18);filter:drop-shadow(0 0 30px #67e8f9)}100%{transform:scale(1)}}
+@keyframes vfxFire{0%{transform:scale(1)}35%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes vfxEarth{0%{transform:scale(1)}40%{transform:scale(.9)}75%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes vfxWind{0%{transform:translateX(0)}30%{transform:translateX(9px)}60%{transform:translateX(-9px)}100%{transform:translateX(0)}}
+@keyframes vfxWater{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes vfxGrass{0%{transform:scale(1)}50%{transform:scale(1.13)}100%{transform:scale(1)}}
+@keyframes vfxParticle{0%{opacity:0;transform:translate(-50%,-10px) scale(.5)}15%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-10px + var(--dy))) scale(1.2)}}
+@keyframes vfxRing{0%{opacity:.9;width:20px;height:20px}100%{opacity:0;width:190px;height:190px}}
+@keyframes vfxBanner{0%{opacity:0;transform:translate(-50%,-50%) scale(.65)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-85%) scale(1)}}
+@keyframes vfxShield{0%{opacity:0;transform:translate(-50%,-50%) scale(.55)}20%{opacity:1;transform:translate(-50%,-50%) scale(1)}80%{opacity:.85}100%{opacity:0;transform:translate(-50%,-50%) scale(1.12)}}
+@keyframes vfxHeal{0%{opacity:0;transform:translate(-50%,10px) scale(.7)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-60px) scale(1.05)}}
+@media(prefers-reduced-motion:reduce){.battleCenter.vfx-shake,#enemy[class*="vfx-"],.vfx-particle,.vfx-ring,.vfx-banner,.vfx-shield,.vfx-heal{animation:none!important}}
+</style>
+</head><body><div class="wrap">
+<div class="top"><div class="brand">GUN<span class="cyan">²</span> Math Hunter</div><div><span class="pill">💰 <b id="money">100</b></span> <span class="pill">💎 <b id="dia">0</b></span> <span class="pill">🎒 <b id="bagN">0</b></span></div></div>
+
+<section id="home" class="screen active"><div class="layout"><div class="card hero"><div class="cyan">CO-OP RPG SHOOTER • PHƯƠNG TRÌNH BẬC 2</div><h1>Giải toán.<br><span class="cyan">Bắn quái.</span></h1><p class="muted">Chọn Offline để chơi một mình, hoặc Online để vào phòng 2 người. Vì rõ ràng bắn quái một mình mãi thì hơi thiếu người để đổ lỗi khi chọn sai đáp án.</p><div class="card" style="margin:14px 0;background:#0d1729;border:1px solid #263653"><h3 style="margin:0 0 8px">🎟️ Nhập Code</h3><div style="display:flex;gap:8px"><input id="redeemCodeInput" maxlength="32" placeholder="Nhập code..." style="flex:1;padding:11px 12px;border-radius:10px;border:1px solid #263653;background:#091221;color:#eef4ff;font-size:15px"><button class="mode" id="redeemCodeBtn">🎁 Nhận</button></div><p class="muted" style="margin:7px 0 0;font-size:13px">Code quà tặng chỉ dùng được 1 lần cho mỗi nhân vật.</p></div><div class="onlineModes"><button class="mode" id="offlineMode">🖥️ <b>Chế độ Offline</b><br><small class="muted">Chơi một mình</small></button><button class="mode" id="onlineMode">🌐 <b>Chế độ Online</b><br><small class="muted">Phòng 2 người</small></button></div><div class="modes" id="offlineActions" style="margin-top:10px"><button class="mode" id="story">🎮 <b>Đấu Cốt Truyện</b><br><small class="muted">Chọn màn trước khi chiến đấu</small></button><button class="mode" id="super">👹 <b>Đấu Siêu Boss</b><br><small class="muted">Boss nhiều HP • 10.000 HP cơ bản</small></button></div></div>
+<div><div class="card"><h3>📦 Kho đồ</h3><button class="mode" id="bag" style="width:100%">Mở kho đồ</button><hr style="border-color:#263653"><h3>🏪 Cửa hàng</h3><button class="mode" id="shopOpen" style="width:100%">Mở cửa hàng</button><p class="muted">Random 6 món • reset mỗi 30 phút • có thể dùng 💎 làm mới.</p></div></div></div></section>
+<section id="onlineLobby" class="screen"><button class="back" id="onlineBack">← Về sảnh</button><div class="layout"><div class="card"><div class="cyan">🌐 PHÒNG ONLINE</div><h2 style="margin:8px 0">Phòng: <span id="roomLabel">-</span></h2><p class="muted" id="roomStatus">Tạo hoặc nhập đúng tên phòng để tham gia.</p><div class="roomrow"><input id="roomInput" maxlength="24" placeholder="Tên phòng, ví dụ: PHONG-ABC"><button class="back" id="roomCreate">➕ Tạo phòng</button><button class="back" id="roomJoin">🔗 Join phòng</button></div><div class="onlinePanel"><b>👥 Người tham gia <span id="playerCount">0/2</span></b><div id="playerList" class="players"></div></div><div class="onlinePanel" id="modeVotePanel" style="display:none"><b>🗳️ Vote chế độ</b><p class="muted" id="modeVoteHint">Khi đủ 2/2 người, cả hai phải chọn cùng một chế độ.</p><div class="votegrid"><button class="voteCard" id="voteStory">🎮 <b>Cốt truyện</b><div class="voteCount" id="voteStoryCount">0/2</div></button><button class="voteCard" id="voteBoss">👹 <b>Siêu Boss</b><div class="voteCount" id="voteBossCount">0/2</div></button></div></div><div class="onlinePanel" id="onlineStagePanel" style="display:none"><b>🗳️ Vote màn cốt truyện</b><p class="muted">Hai người phải chọn cùng một màn. Đủ 2/2 sẽ tự động vào màn đó.</p><div id="onlineStageGrid" class="campaign"></div></div><div class="onlinePanel" id="onlineBossPanel" style="display:none"><b>✨ Hiệu ứng Siêu Boss</b><p class="muted">Mỗi người tự chọn 2 hiệu ứng riêng, không cần vote.</p><button class="mode" id="onlineBossEffects" style="width:100%">Chọn 2 hiệu ứng của tôi</button><div class="muted" id="onlineBossEffectStatus" style="margin-top:8px">Chưa chọn</div></div></div><div><div class="card"><h3>📦 Kho đồ</h3><button class="mode" id="onlineBag" style="width:100%">Mở kho đồ</button><hr style="border-color:#263653"><h3>🏪 Cửa hàng</h3><button class="mode" id="onlineShop" style="width:100%">Mở cửa hàng</button><p class="muted">Trong phòng online, kho đồ và cửa hàng vẫn mở bất kỳ lúc nào.</p></div></div></div></section>
+
+<section id="battle" class="screen"><button class="back" id="back">← Về sảnh</button><div class="card"><div style="text-align:center"><span class="stageMoney">💰 Tiền trong màn: <b id="stageMoney">0</b></span></div><div class="fight"><div class="fighter"><div class="avatar">🧑‍🚀</div><b id="playerNameBattle">LAN</b><div class="muted">⭐ Lv.<span id="battleLevel">1</span></div><div class="hp"><i id="php"></i></div><div>❤️ <span id="ph">200</span>/<span id="phpMax">200</span></div><div id="selfReviveStatus" class="muted"></div></div><div class="battleCenter"><div class="boss" id="enemy">👾</div><div id="damageFx"></div><h2 id="ename" style="text-align:center">Scrap Drone</h2><div class="hp"><i id="ehpbar"></i></div><div style="text-align:center">❤️ <span id="eh">100</span>/<span id="em">100</span></div><div class="muted" id="bossLevelLabel">Boss Lv.1</div><div class="question" id="q"></div><div id="answerTimer" class="answerTimer">⏱️ 02:00</div><div class="answers" id="answers"></div><div class="log" id="log">Chọn đáp án.</div><div class="battletools"><button class="bagbtn" id="backpackOpen">🎒 Balo <span id="backpackCount">0</span>/30</button></div></div><div class="fighter"><div class="avatar">👾</div><b>KẺ ĐỊCH</b><p class="muted">Quái: 60% đánh trúng<br>Boss: 50% đánh trúng</p></div></div><div id="onlineTeam" class="onlineTeam"><div id="teamMe" class="teamcard"></div><div id="teamMate" class="teamcard"></div></div></div></section>
+
+<section id="campaign" class="screen"><button class="back" id="campaignBack">← Về sảnh</button><div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><h2 style="margin:0">🎮 Đấu Cốt Truyện</h2><p class="muted">Mỗi màn gồm 4 ải: 3 ải quái + ải 4 Boss.</p></div><span class="pill">Đã phá đảo: <b id="doneCount">0</b>/200</span></div><div id="campaignGrid" class="campaign"></div></div></section>
+<section id="bossSetup" class="screen"><button class="back" id="bossBack">← Về sảnh</button><div class="card"><div style="text-align:center"><div style="font-size:64px">👹</div><h2 style="margin:4px 0">Đấu Siêu Boss</h2><p class="muted">Chọn <b>2 hiệu ứng hỗ trợ</b> trước khi bước vào trận. Chọn khôn một chút, vì Boss không có nghĩa vụ thương lượng.</p><div class="pill">✨ Đã chọn: <b id="effectCount">0</b>/2</div></div><div id="effectGrid" class="effectgrid"></div><button class="mode" id="effectConfirm" style="width:100%;margin-top:14px;text-align:center" disabled>⚔️ Bắt đầu đánh Boss</button></div></section>
+
+<div id="gearDetailModal" class="modal"><div class="modalbox geardetail"><div class="geardetailhead"><div><h2 id="gdTitle" style="margin:0">⚙️ Trang bị</h2><div id="gdRarity" class="muted"></div></div><button class="back" id="gearDetailClose">✕ Đóng</button></div><div id="gdBody" class="geardetailbody"></div><div id="gdActions" class="geardetailactions"></div></div></div><div id="backpackModal" class="modal"><div class="modalbox"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">🎒 Balo trong trận</h2><p class="muted" style="margin:6px 0 0">Tối đa 30 ô. Dùng bình máu trực tiếp trong trận.</p></div><button class="back" id="backpackClose">✕ Đóng</button></div><div class="pill" style="display:inline-block;margin-top:12px">📦 <b id="backpackCount2">0</b>/30</div><div id="backpackGrid" class="backpackgrid"></div></div></div><div id="shopModal" class="modal"><div class="modalbox"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🏪 Cửa hàng</h2><div class="muted" style="margin-top:6px">🔄 Làm mới sau <b id="shopCountdown">30:00</b></div></div><div style="display:flex;gap:8px"><button class="mode" id="shopRefresh">💎 Làm mới • 1</button><button class="back" id="shopClose">✕ Đóng</button></div></div><div id="shopGrid" class="shopgrid"></div><p class="muted">Mỗi lượt có 6 món ngẫu nhiên. Cứ 30 phút tự động làm mới. Có thể dùng 1 💎 để làm mới ngay.</p></div></div>
+<section id="result" class="screen"><div class="card" style="text-align:center"><div id="ri" style="font-size:70px">🏆</div><h2 id="rt"></h2><p id="rx"></p><div class="loot" id="loot"></div><button class="mode" id="next" style="width:100%;margin-top:12px">➡️ Tiếp tục</button></div></section>
+<section id="bagScreen" class="screen"><button class="back" id="bb">← Về sảnh</button><div class="card"><div class="vaulthead"><div><h2 style="margin:0">📦 Kho đồ & Nhân vật</h2><p class="muted" style="margin-bottom:0">Bấm vào từng ô trang bị để mở rương và chỉ xem đúng loại đồ đó. Từ phẩm chất Tím trở lên mới có ST nguyên tố và mới có thể kích hoạt Set 5/5.</p></div><span class="pill">🎒 <b id="bagCount2">0</b> món</span></div><div class="profilegrid"><div class="charbox"><h3 style="margin-top:0">🧑‍🚀 Nhân vật</h3><div class="charavatar">🧑‍🚀</div><div class="pill" style="text-align:center;margin-bottom:8px">⭐ Cấp <b id="charLevel">1</b>/200 • EXP <b id="charXp">0/100</b></div><h3 id="charName" style="text-align:center;margin:6px 0">LAN</h3><div style="text-align:center;margin:4px 0 10px"><span id="characterRarity" class="rarW">⚪ Trắng</span></div><button class="mode" onclick="changeCharacter()" style="width:100%;margin-bottom:12px">🎴 Đổi phẩm chất nhân vật <span class="muted">• cần Thẻ đổi nhân vật</span></button><div style="display:flex;gap:8px;margin:10px 0 12px"><input id="nameInput" maxlength="16" placeholder="Nhập tên nhân vật" style="flex:1;padding:10px 12px;border-radius:10px;border:1px solid #263653;background:#0d1729;color:#eef4ff;font-size:15px"><button class="back" id="saveName">💾 Đặt tên</button></div><div class="statgrid"><div class="stat">❤️ HP<br><b id="stHP">200</b></div><div class="stat">🛡️ DEF<br><b id="stDef">0</b></div><div class="stat">🔫 ATK<br><b id="stDMG">30</b></div><div class="stat">🎯 Tỷ lệ bạo<br><b id="stCrit">5%</b></div><div class="stat">💥 ST bạo<br><b id="stCritDmg">150%</b></div><div class="stat">💨 Tỷ lệ né tránh<br><b id="stDodge">0%</b></div><div class="stat statwide">🎲 Rơi đồ <b id="stDrop">0%</b> • 💰 Rơi tiền <b id="stMoneyDrop">0%</b></div><div class="stat statwide"><b>✨ ST nguyên tố</b><div id="stElements" class="elementGrid"><span class="muted">Chưa có hiệu ứng trang bị</span></div></div></div></div><div class="equipbox"><h3 style="margin-top:0">⚙️ Trang bị</h3><div id="equipGrid" class="equipgrid"></div></div></div><div class="vaultfilter"><div id="vaultTitle" style="font-size:20px;font-weight:800">🎒 Tất cả trang bị</div><p id="vaultHint" class="muted">Chọn một ô phía trên để lọc theo loại.</p><div id="inv" class="invgrid"></div></div></div></section>
+</div><div class="toast" id="toast"></div><div id="deadOverlay" class="deadOverlay"><div class="deadBox"><div style="font-size:58px">💀</div><h2 id="deadTitle">Đồng đội đã chết</h2><p id="deadText" class="muted"></p><div id="deadActions"></div></div></div>
+
+<script>
+(()=>{const $=s=>document.querySelector(s),S=['home','onlineLobby','campaign','bossSetup','battle','result','bagScreen'];
+// One-time character data reset requested by the user. Keeps the current character name.
+const CHARACTER_RESET_VERSION='2026-10-01-reset-all-v1';
+if(localStorage.getItem('gun2_character_reset_version')!==CHARACTER_RESET_VERSION){
+  const keepName=localStorage.getItem('gun2_name')||'LAN';
+  Object.keys(localStorage).forEach(k=>{if(k.startsWith('gun2_profile_'))localStorage.removeItem(k)});
+  localStorage.setItem('gun2_name',keepName);
+  localStorage.setItem('gun2_character_reset_version',CHARACTER_RESET_VERSION);
+}
+let game={name:localStorage.getItem('gun2_name')||'LAN',level:1,xp:0,levelXp:100,hp:200,eh:100,em:100,boss:false,bossLevel:1,bossElements:[],superBossIndex:1,_enemyRewarded:false,combo:0,bag:[],backpack:[],money:100,dia:0,loot:[],stage:1,done:[],equipped:{helmet:null,shirt:null,weapon:null,pants:null,shoes:null,special:null},vaultFilter:null,superEffects:[],bossShield:true,bossAnswers:0,online:false,room:'',role:'',peer:null,conn:null,players:[],modeVotes:{},stageVotes:{},onlineEffects:{},stageMoney:0,teamHp:{host:200,guest:200},teamDead:{host:false,guest:false},reviveTimers:{host:0,guest:0},teamShieldHits:{host:0,guest:0},teamBuffTurns:{host:0,guest:0},enemyStunUntil:0,enemyControlUntil:0,enemyStunned:false,enemySlowed:false,enemyStatusEffects:[],stageWave:1,storyBattle:false,finished:false,spectator:false,teamSpectator:{host:false,guest:false},beginnerChestBought:0,redeemedCodes:[],characterRarity:'rarW',specialCooldowns:{}};
+
+function profileKey(name){
+  const clean=(name||'LAN').trim().toLowerCase().replace(/[^a-z0-9\u00C0-\u024F\u1E00-\u1EFF]+/gi,'_').slice(0,40)||'lan';
+  return 'gun2_profile_'+clean;
+}
+function cleanupExpiredItems(){
+  const now=Date.now();
+  let removed=0;
+  const expired=x=>x&&x.expiresAt&&Number(x.expiresAt)<=now;
+  const oldBag=game.bag.length;game.bag=game.bag.filter(x=>{if(expired(x)){removed++;return false}return true});
+  Object.keys(game.equipped||{}).forEach(slot=>{if(expired(game.equipped[slot])){game.equipped[slot]=null;removed++}});
+  if(removed){saveProfile();wallet();stats();equipCards();toast('⏰ Trang bị dùng thử 5 giờ đã hết hạn và tự biến mất.');}
+  return removed;
+}
+function makeTimedBeginnerGear(){
+  const r=['🟣','Tím',3,'rarP'];
+  const item=gearWithRarity(r);
+  item.expiresAt=Date.now()+5*60*60*1000;
+  item.trialItem=true;
+  item.trialDuration=5*60*60*1000;
+  return item;
+}
+function makeBetaRainbowSet(){
+  const slots=['helmet','shirt','weapon','pants','shoes'];
+  const els=[['fire','🔥','Lửa'],['ice','❄️','Băng'],['lightning','⚡','Lôi'],['water','💧','Thủy'],['wind','🌪️','Phong'],['grass','🌿','Thảo'],['earth','🪨','Nham']];
+  const chosen=els.slice().sort(()=>Math.random()-.5).slice(0,3);
+  return slots.map(slot=>{
+    const item=gearWithRarity(['🌈','Cầu Vồng',RAINBOW_RATE_PCT,'rarV']);
+    const def=gearDefs.find(x=>x[1]===slot);
+    if(def){item.name=def[0];item.slot=def[1];item.icon=def[2];}
+    item.setId='rainbow-beta'; item.setName='Bộ 7 Sắc Cầu Vồng'; item.betaItem=true; item.special=true;
+    item.stat.elements={};
+    const elemBase=160;
+    chosen.forEach((el,i)=>{const dmg=Math.round(elemBase*(0.95+Math.random()*0.10));item.stat.elements[el[0]]=dmg;if(i===0){item.stat.element=el[0];item.stat.elementIcon=el[1];item.stat.elementName=el[2];item.stat.elementDmg=dmg;}});
+    return item;
+  });
+}
+function redeemCode(){
+  const input=$('#redeemCodeInput'); if(!input)return;
+  const code=input.value.trim().toLowerCase();
+  if(!code){toast('🎟️ Hãy nhập code.');return}
+  game.redeemedCodes=Array.isArray(game.redeemedCodes)?game.redeemedCodes:[];
+  if(game.redeemedCodes.includes(code)){toast('🚫 Code này đã được sử dụng cho nhân vật này.');return}
+  if(code==='tanthu1'){
+    cleanupExpiredItems();
+    game.bag.push(makeTimedBeginnerGear());
+    game.redeemedCodes.push(code);
+    saveProfile();renderInv();stats();equipCards();wallet();input.value='';
+    toast('🎁 Code TAN THU 1: nhận 1 trang bị 🟣 Tím ngẫu nhiên, dùng được 5 giờ.');
+    return;
+  }
+  if(code==='tanthu2'){
+    game.bag.push(beginnerChest());
+    game.redeemedCodes.push(code);
+    saveProfile();renderInv();stats();equipCards();wallet();input.value='';
+    toast('🎁 Code TAN THU 2: nhận 1 Rương Tân Thủ.');
+    return;
+  }
+  if(code==='beta'){
+    const set=makeBetaRainbowSet();
+    game.bag.push(...set);
+    game.redeemedCodes.push(code);
+    saveProfile();renderInv();stats();equipCards();wallet();input.value='';
+    toast('🌈 Code BETA: nhận trọn bộ 7 Sắc Cầu Vồng 5 món, 3 nguyên tố!');
+    return;
+  }
+  toast('❌ Code không hợp lệ.');
+}
+window.redeemCode=redeemCode;
+function profileData(){
+  return {
+    name:game.name,
+    level:game.level,
+    xp:game.xp,
+    superBossIndex:game.superBossIndex,
+    money:game.money,
+    dia:game.dia,
+    bag:game.bag,
+    backpack:game.backpack,
+    equipped:game.equipped,
+    done:game.done,
+    stage:game.stage,
+    superEffects:game.superEffects,
+    bossShield:game.bossShield,
+    beginnerChestBought:Number(game.beginnerChestBought)||0,
+    redeemedCodes:Array.isArray(game.redeemedCodes)?game.redeemedCodes:[],
+    characterRarity:CHARACTER_RARITIES[game.characterRarity]?game.characterRarity:'rarW'
+  };
+}
+function saveProfile(){
+  try{
+    localStorage.setItem(profileKey(game.name),JSON.stringify(profileData()));
+    localStorage.setItem('gun2_name',game.name);
+  }catch(e){console.warn('Không thể lưu profile',e)}
+}
+function loadProfile(name){
+  const raw=localStorage.getItem(profileKey(name));
+  if(!raw)return false;
+  try{
+    const d=JSON.parse(raw);
+    game.name=d.name||name;
+    game.level=Math.min(200,Math.max(1,Number(d.level)||1));
+    game.xp=Math.max(0,Number(d.xp)||0);
+    game.levelXp=100+(game.level-1)*50;
+    game.superBossIndex=Math.min(10,Math.max(1,Number(d.superBossIndex)||1));
+    game.money=Number.isFinite(d.money)?d.money:100;
+    game.dia=Number.isFinite(d.dia)?d.dia:0;
+    game.bag=Array.isArray(d.bag)?d.bag:[];
+    game.backpack=Array.isArray(d.backpack)?d.backpack:[];
+    game.equipped=d.equipped||{helmet:null,shirt:null,weapon:null,pants:null,shoes:null};
+    game.done=Array.isArray(d.done)?d.done:[];
+    game.stage=d.stage||1;
+    game.superEffects=Array.isArray(d.superEffects)?d.superEffects:[];
+    game.bossShield=d.bossShield!==false;
+    game.beginnerChestBought=(typeof d.beginnerChestBought==='number')?Math.max(0,Math.min(10,d.beginnerChestBought)):(d.beginnerChestBought===true?0:0);
+    game.redeemedCodes=Array.isArray(d.redeemedCodes)?d.redeemedCodes:[];
+    game.characterRarity=CHARACTER_RARITIES[d.characterRarity]?d.characterRarity:'rarW';
+    return true;
+  }catch(e){console.warn('Profile hỏng, tạo lại',e);return false}
+}
+const firstName=localStorage.getItem('gun2_name')||'LAN';
+loadProfile(firstName);
+
+let shop=[];
+let shopNextRefresh=Date.now()+30*60*1000;
+function saveShopState(){
+  try{localStorage.setItem('gun2_shop_state',JSON.stringify({shop,shopNextRefresh}))}catch(e){}
+}
+function loadShopState(){
+  try{
+    const raw=localStorage.getItem('gun2_shop_state');
+    if(!raw)return false;
+    const d=JSON.parse(raw);
+    if(!Array.isArray(d.shop)||!d.shop.length||!d.shopNextRefresh)return false;
+    shop=d.shop;shopNextRefresh=d.shopNextRefresh;
+    return Date.now()<shopNextRefresh;
+  }catch(e){return false}
+}
+function shopPrice(x){
+  // Giá shop được cân theo đúng giá trị bán của món đồ rơi,
+  // nhưng cao hơn giá bán lại để không thể mua rồi bán kiếm lời.
+  // Người mua bán lại chỉ nhận 70% đúng số tiền đã mua.
+  const st=x.stat||{};
+  const base={rarW:12,rarG:22,rarB:40}[x.cls]||15;
+  const value=(st.hp||0)*.05+(st.dmg||0)*.45+(st.def||0)*.25+(st.crit||0)*3+
+    (st.critDmg||0)*.55+(st.dodge||0)*2.5+(st.hpPct||0)*2.5+
+    (st.atkPct||0)*3+(st.defPct||0)*2.2+(st.dropPct||0)*1.8+
+    (st.moneyPct||0)*1.5+(st.elementDmg||0)*.45;
+  const fairSell=Math.max(1,Math.round((base+value)/5)*5);
+  return Math.max(10,Math.ceil((fairSell/0.70)/5)*5);
+}
+function randomizeShop(){
+  // Cửa hàng dùng CHÍNH HÀM gear() như đồ rơi từ quái/Boss:
+  // cùng tỷ lệ phẩm chất, cùng stat nền HP/ATK/DEF, cùng 1–2 stat phụ,
+  // và Tím+ mới có ST nguyên tố.
+  shop=Array.from({length:6},()=>{
+    const x=gear(false,null,['rarW','rarG','rarB']);
+    x.shop=true;
+    x.price=shopPrice(x);
+    return x;
+  });
+  shopNextRefresh=Date.now()+30*60*1000;
+  saveShopState();
+  renderShop();
+  toast('🏪 Cửa hàng đã làm mới!');
+}
+setTimeout(()=>{if(!loadShopState())randomizeShop();else{renderShop();autoShopRefresh&&autoShopRefresh()}},0);
+function autoShopRefresh(){
+  if(Date.now()>=shopNextRefresh){randomizeShop();return}
+  const left=Math.max(0,shopNextRefresh-Date.now());
+  const sec=Math.ceil(left/1000);
+  const m=Math.floor(sec/60), ss=String(sec%60).padStart(2,'0');
+  const el=$('#shopCountdown'); if(el) el.textContent=`${m}:${ss}`;
+}
+function manualShopRefresh(){
+  if(game.dia<1){toast('💎 Không đủ kim cương! Cần 1 💎 để làm mới.');return}
+  game.dia--;
+  randomizeShop();
+  wallet();
+}
+window.manualShopRefresh=manualShopRefresh;
+const R=[['⚪','Trắng',45,'rarW'],['🟢','Xanh',25,'rarG'],['🔵','Lam',15,'rarB'],['🟣','Tím',3,'rarP'],['🟡','Vàng',.01,'rarY'],['🟠','Cam',.0025,'rarO'],['🔴','Đỏ',.0005,'rarR']];
+
+// ===== PHẨM CHẤT NHÂN VẬT =====
+const CHARACTER_RARITIES={
+ rarW:{ri:'⚪',name:'Trắng',cls:'rarW',hp:150,dmg:30,def:0,crit:2,critDmg:60},
+ rarG:{ri:'🟢',name:'Xanh',cls:'rarG',hp:185,dmg:37,def:3,crit:2.5,critDmg:70},
+ rarB:{ri:'🔵',name:'Lam',cls:'rarB',hp:230,dmg:46,def:7,crit:3,critDmg:82},
+ rarP:{ri:'🟣',name:'Tím',cls:'rarP',hp:290,dmg:58,def:12,crit:3.8,critDmg:98},
+ rarY:{ri:'🟡',name:'Vàng',cls:'rarY',hp:370,dmg:74,def:20,crit:4.8,critDmg:118},
+ rarO:{ri:'🟠',name:'Cam',cls:'rarO',hp:470,dmg:94,def:30,crit:6,critDmg:142},
+ rarR:{ri:'🔴',name:'Đỏ',cls:'rarR',hp:600,dmg:120,def:45,crit:7.5,critDmg:170},
+ rarV:{ri:'🌈',name:'7 Sắc',cls:'rarV',hp:780,dmg:156,def:65,crit:10,critDmg:210}
+};
+function getCharacterRarity(){return CHARACTER_RARITIES[game.characterRarity]||CHARACTER_RARITIES.rarW}
+function randomCharacterRarity(){
+  if(Math.random()<RAINBOW_RATE_PCT/100)return 'rarV';
+  let n=Math.random()*100,sum=0;for(const r of R){sum+=r[2];if(n<sum)return r[3]}
+  return 'rarW';
+}
+function characterCard(){return{name:'Thẻ đổi nhân vật',slot:'other',icon:'🎴',ri:'🎴',rar:'Thẻ đổi nhân vật',cls:'rarG',stars:1,characterCard:true,stat:{}}}
+function changeCharacter(){
+  const idx=game.bag.findIndex(x=>x&&x.characterCard);if(idx<0){toast('🎴 Chưa có Thẻ đổi nhân vật! Đánh Siêu Boss để tìm thẻ.');return}
+  const old=getCharacterRarity(),next=randomCharacterRarity();game.bag.splice(idx,1);game.characterRarity=next;
+  game.hp=Math.min(game.hp,calcStats().hp);saveProfile();wallet();renderInv();stats();equipCards();bars();closeGearDetail();
+  toast(`🎴 Đổi nhân vật: ${old.ri} ${old.name} → ${getCharacterRarity().ri} ${getCharacterRarity().name}!`);
+}
+window.changeCharacter=changeCharacter;
+
+// ===== HIỆU ỨNG ĐẶC THÙ CHỈ DÀNH CHO TRANG BỊ ĐẶC BIỆT =====
+const specialEffectPools={
+ rarY:[
+  ['reflect','🪞 Phản chấn','Khi chịu sát thương, có 25% cơ hội phản lại 10–20% sát thương quái/Boss gây ra.'],
+  ['guard','🛡️ Hộ giáp','Khi HP dưới 30%, giảm 8% sát thương nhận vào trong 5 giây. Hồi 25 giây.'],
+  ['lifesteal','🩸 Hấp huyết','Khi gây sát thương, có 20% cơ hội hồi 3–5% HP tối đa.'],
+  ['thorns','⚔️ Gai phản kích','Khi bị đánh trúng, có 30% cơ hội gây lại 20–30% sát thương vừa nhận.']],
+ rarO:[
+  ['reflect','🪞 Phản chấn','Khi chịu sát thương, có 35% cơ hội phản lại 20–35% sát thương quái/Boss gây ra.'],
+  ['guard','🛡️ Hộ giáp','Khi HP dưới 35%, giảm 12% sát thương nhận vào trong 6 giây. Hồi 20 giây.'],
+  ['lifesteal','🩸 Hấp huyết','Khi gây sát thương, có 30% cơ hội hồi 5–8% HP tối đa.'],
+  ['thorns','⚔️ Gai phản kích','Khi bị đánh trúng, có 40% cơ hội gây lại 35–50% sát thương vừa nhận.'],
+  ['secondChance','💫 Sinh tồn','Khi nhận sát thương chí mạng có 12% cơ hội sống sót với 1 HP. Hồi 90 giây.']],
+ rarR:[
+  ['reflect','🪞 Phản chấn','Khi chịu sát thương, có 45% cơ hội phản lại 30–50% sát thương quái/Boss gây ra.'],
+  ['guard','🛡️ Hộ giáp','Khi HP dưới 40%, giảm 18% sát thương nhận vào trong 8 giây. Hồi 18 giây.'],
+  ['lifesteal','🩸 Hấp huyết','Khi gây sát thương, có 40% cơ hội hồi 8–12% HP tối đa.'],
+  ['thorns','⚔️ Gai phản kích','Khi bị đánh trúng, có 50% cơ hội gây lại 50–75% sát thương vừa nhận.'],
+  ['secondChance','💫 Sinh tồn','Khi nhận sát thương chí mạng có 20% cơ hội sống sót với 1 HP. Hồi 60 giây.'],
+  ['bossBreaker','👹 Kẻ Diệt Boss','Gây thêm 8–12% sát thương lên Boss.']],
+ rarV:[
+  ['reflect','🪞 Phản chấn tối thượng','Khi chịu sát thương, có 55% cơ hội phản lại 50–80% sát thương quái/Boss gây ra.'],
+  ['guard','🛡️ Giáp Hư Không','Khi HP dưới 50%, giảm 25% sát thương nhận vào trong 10 giây. Hồi 15 giây.'],
+  ['lifesteal','🩸 Hấp huyết tối thượng','Khi gây sát thương, có 50% cơ hội hồi 10–15% HP tối đa.'],
+  ['thorns','⚔️ Phản kích Hủy Diệt','Khi bị đánh trúng, có 60% cơ hội gây lại 80–120% sát thương vừa nhận.'],
+  ['secondChance','💫 Mệnh Lệnh Bất Tử','Khi nhận sát thương chí mạng có 35% cơ hội sống sót với 1 HP. Hồi 45 giây.'],
+  ['bossBreaker','👹 Kẻ Diệt Boss Tối Thượng','Gây thêm 15–20% sát thương lên Boss.'],
+  ['overdrive','⚡ Quá Tải','Khi HP dưới 40%, tăng 20–30% sát thương gây ra.']]
+};
+const specialEffectColor={rarY:'#facc15',rarO:'#fb923c',rarR:'#ef4444',rarV:'#e879f9'};
+function rollSpecialEffect(c){const p=specialEffectPools[c];if(!p)return null;const e=p[Math.floor(Math.random()*p.length)];return{id:e[0],name:e[1],text:e[2],color:specialEffectColor[c]||'#fff'}}
+function specialGear(){const r=rarity(),m=rarityMult[r[3]]||1;const base={hp:45,dmg:6,def:7};const stat={hp:Math.round(base.hp*m),dmg:Math.round(base.dmg*m),def:Math.round(base.def*m),elements:{}};const effect=rollSpecialEffect(r[3]);const names=['Lõi Hộ Vệ','Mô-đun Sinh Tồn','Lõi Chiến Thuật','Bộ Khuếch Đại Hỗ Trợ'],icons=['🛡️','💠','⚙️','✨'],i=Math.floor(Math.random()*names.length);return{name:names[i],slot:'special',icon:icons[i],ri:r[0],rar:r[1],cls:r[3],stars:1,special:true,supportGear:true,specialEffect:effect,stat}}
+function specialEffectHtml(x){if(!x||!x.supportGear||!x.specialEffect)return '';const e=x.specialEffect;return `<div class="special-effect-line" style="--special-effect-color:${e.color||'#fff'}"><span class="special-effect-label">✨ HIỆU ỨNG ĐẶC THÙ</span><b>${e.name}</b><div>${e.text}</div></div>`}
+
+const gearDefs=[['Pulse Rifle','weapon','🔫'],['Scout Helmet','helmet','🪖'],['Combat Suit','shirt','👕'],['Runner Pants','pants','👖'],['Combat Boots','shoes','🥾']];
+const slotInfo={helmet:['🪖','Mũ'],shirt:['👕','Áo giáp'],weapon:['🔫','Vũ khí'],pants:['👖','Quần'],shoes:['🥾','Giày'],special:['✨','Trang bị đặc biệt'],other:['🎁','Đồ khác']};
+const SUPER_BOSS_DATA=[
+ {level:100,hp:10000,elements:2,icon:'🔥',name:'Cuồng Nộ',desc:'Khi HP Boss còn ≤50%, sát thương Boss +20%.'},
+ {level:110,hp:14000,elements:2,icon:'💚',name:'Tái Sinh',desc:'Mỗi 5 đáp án đúng của người chơi, Boss hồi 4% HP tối đa.'},
+ {level:120,hp:18000,elements:3,icon:'🛡️',name:'Giáp Hư Không',desc:'Boss nhận ít hơn 12% sát thương.'},
+ {level:130,hp:23000,elements:3,icon:'🪞',name:'Lõi Phản Chấn',desc:'15% cơ hội phản lại 20% sát thương vừa nhận.'},
+ {level:140,hp:29000,elements:4,icon:'⚡',name:'Lôi Đình',desc:'Mỗi 6 đáp án đúng, đòn đánh kế tiếp của Boss gây thêm 35% sát thương.'},
+ {level:150,hp:36000,elements:4,icon:'💀',name:'Săn Mồi',desc:'Khi người chơi dưới 50% HP, Boss tăng 25% sát thương.'},
+ {level:165,hp:45000,elements:5,icon:'🌪️',name:'Bão Không Gian',desc:'Mỗi 4 đáp án đúng, Boss có 25% cơ hội tung đòn ngay lập tức.'},
+ {level:180,hp:56000,elements:5,icon:'🩸',name:'Hấp Huyết',desc:'Mỗi đòn Boss đánh trúng hồi 12% sát thương đã gây ra.'},
+ {level:190,hp:70000,elements:6,icon:'☄️',name:'Diệt Tinh',desc:'Khi HP Boss còn ≤30%, sát thương Boss +40% và giảm 10% né tránh của người chơi.'},
+ {level:200,hp:90000,elements:7,icon:'👑',name:'Chúa Tể 7 Sắc',desc:'Có đủ 7 nguyên tố. Khi HP ≤50%, Boss tăng 35% sát thương và mỗi 5 đáp án đúng hồi 3% HP tối đa.'}
+];
+const bossEffects=[
+ {id:'power',icon:'🔥',name:'Đạn Cường Hóa',desc:'+20% sát thương mỗi lần trả lời đúng.'},
+ {id:'armor',icon:'🛡️',name:'Giáp Năng Lượng',desc:'Giảm 20% sát thương Boss gây ra.'},
+ {id:'regen',icon:'💚',name:'Nanobot Hồi Phục',desc:'Mỗi 3 câu trả lời đúng, hồi 20 HP.'},
+ {id:'shield',icon:'🔰',name:'Khiên Khởi Đầu',desc:'Chặn hoàn toàn đòn đánh Boss đầu tiên.'},
+ {id:'focus',icon:'🎯',name:'Tập Trung',desc:'Mỗi Super Crit gây thêm 25 sát thương.'},
+ {id:'ammo',icon:'⚡',name:'Đạn Xung Điện',desc:'Sau mỗi 2 đáp án đúng liên tiếp, phát thêm 20 sát thương.'}
+];
+const rarityMult={rarW:1,rarG:1.25,rarB:1.6,rarP:2.1,rarY:3,rarO:4,rarR:6,rarV:8};
+const RAINBOW_RATE_PCT=0.0000015;
+function show(x){S.forEach(s=>$('#'+s).classList.toggle('active',s===x))}
+function toast(t){let e=$('#toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1300)}
+function rarity(allowed=null){
+  if(Array.isArray(allowed)&&allowed.length){
+    const pool=R.filter(r=>allowed.includes(r[3]));
+    const total=pool.reduce((a,r)=>a+r[2],0);
+    let n=Math.random()*total,sum=0;
+    for(const r of pool){sum+=r[2];if(n<sum)return r}
+    return pool[0]||R[0];
+  }
+  // 🌈 Cầu Vồng: chỉ có thể nhận từ phần thưởng sau khi đánh quái/Boss, không xuất hiện trong Shop.
+  if(Math.random() < RAINBOW_RATE_PCT/100) return ['🌈','Cầu Vồng',RAINBOW_RATE_PCT,'rarV'];
+  let n=Math.random()*100,sum=0;for(let r of R){sum+=r[2];if(n<sum)return r}return R[0]
+}
+function gear(special=false,forcedSlot=null,allowedRarities=null){
+ let r=rarity(allowedRarities),d=gearDefs[Math.floor(Math.random()*gearDefs.length)];
+ if(forcedSlot)d=gearDefs.find(x=>x[1]===forcedSlot)||d;
+ let m=rarityMult[r[3]]||1;
+ let stat={hp:0,dmg:0,def:0,crit:0,critDmg:0,dodge:0,hpPct:0,atkPct:0,defPct:0,dropPct:0,moneyPct:0,element:null,elementDmg:0,elements:{}};
+ // Mọi trang bị đều có 3 chỉ số cơ bản: HP + ATK + DEF.
+ // Loại trang bị chỉ quyết định món nào thiên về chỉ số nào.
+ const baseBySlot={
+  helmet:{hp:40,dmg:5,def:6},
+  shirt:{hp:70,dmg:8,def:10},
+  weapon:{hp:25,dmg:24,def:4},
+  pants:{hp:25,dmg:5,def:4},
+  shoes:{hp:30,dmg:6,def:5}
+ };
+ const base=baseBySlot[d[1]]||{hp:30,dmg:5,def:4};
+ stat.hp=Math.round(base.hp*m);stat.dmg=Math.round(base.dmg*m);stat.def=Math.round(base.def*m);
+ if(d[1]==='helmet')stat.dodge=Number((1*m).toFixed(1));
+ if(d[1]==='weapon')stat.critDmg=Number((5*m).toFixed(1));
+ if(d[1]==='pants')stat.dodge=Number((1.5*m).toFixed(1));
+ if(d[1]==='shoes'){stat.crit=Number((2*m).toFixed(1));stat.dodge=Number((2*m).toFixed(1));}
+ // Mỗi trang bị luôn có HP/ATK/DEF theo loại. Sau đó ngẫu nhiên thêm 1 hoặc 2 chỉ số phụ.
+ const extraPool=[
+  ['crit','🎯 Tỷ lệ bạo',1.5,4],['critDmg','💥 ST bạo',5,15],['defPct','🛡️ %DEF',3,8],
+  ['hpPct','❤️ %HP',3,8],['atkPct','🔫 %ATK',3,8],['dropPct','🎁 % rơi đồ',2,6],['moneyPct','💰 % rơi tiền',2,8]
+ ];
+ const count=Math.random()<.5?1:2, pool=extraPool.slice();
+ for(let i=0;i<count;i++){const j=Math.floor(Math.random()*pool.length),a=pool.splice(j,1)[0];stat[a[0]]=Number((a[2]+Math.random()*(a[3]-a[2])).toFixed(1));}
+ // Từ phẩm chất Tím trở lên, trang bị mới có chỉ số nguyên tố.
+ // Trắng/Xanh/Lam vẫn là trang bị thường, không có nguyên tố và không tham gia kích hoạt Set.
+ let elementalGear=['rarP','rarY','rarO','rarR','rarV'].includes(r[3]);
+ let specialEffect=elementalGear;
+ if(elementalGear){
+  const els=[['fire','🔥','Lửa'],['ice','❄️','Băng'],['lightning','⚡','Lôi'],['water','💧','Thủy'],['wind','🌪️','Phong'],['grass','🌿','Thảo'],['earth','🪨','Nham']];
+  const elemBase={rarP:30,rarY:50,rarO:75,rarR:110,rarV:160}[r[3]]||30;
+  const primary=els[Math.floor(Math.random()*els.length)];
+  const elementCount=r[3]==='rarY'?(Math.random()<0.05?2:1):r[3]==='rarO'?(Math.random()<0.07?2:1):r[3]==='rarR'?(Math.random()<0.0001?3:(Math.random()<0.10?2:1)):r[3]==='rarV'?(Math.random()<0.01?3:(Math.random()<0.20?2:1)):1;
+  const chosen=[primary];
+  while(chosen.length<elementCount){const e=els[Math.floor(Math.random()*els.length)];if(!chosen.some(x=>x[0]===e[0]))chosen.push(e);}
+  chosen.forEach((el,i)=>{
+    const dmg=Math.round(elemBase*(0.85+Math.random()*0.30));
+    stat.elements[el[0]]=dmg;
+    if(i===0){stat.element=el[0];stat.elementIcon=el[1];stat.elementName=el[2];stat.elementDmg=dmg;}
+  });
+ }
+ return{name:d[0],slot:d[1],icon:d[2],ri:r[0],rar:r[1],cls:r[3],stars:1,special:specialEffect,stat};
+}
+
+const online={host:null,connections:[]};
+function roomKey(n){return 'gun2-room-'+n.toLowerCase().trim().replace(/[^a-z0-9_-]/g,'').slice(0,20)}
+function myPlayer(){return {id:game.role==='host'?'host':'guest',name:game.name,role:game.role,effects:game.superEffects||[]}}
+function onlineSend(msg){try{if(game.role==='host'){online.connections.forEach(c=>{if(c&&c.open)c.send(msg)})}else if(game.conn&&game.conn.open)game.conn.send(msg)}catch(e){console.warn(e)}}
+function onlineBroadcastState(){if(game.role!=='host')return;const ps=[{id:'host',name:game.name,role:'host'}];online.connections.forEach(c=>{if(c&&c.open&&c.metaPlayer)ps.push(c.metaPlayer)});game.players=ps.slice(0,2);onlineSend({type:'state',players:game.players,modeVotes:game.modeVotes,stageVotes:game.stageVotes,onlineEffects:game.onlineEffects,hostName:game.name});renderOnlineLobby()}
+function startTeamBuffTicker(){clearInterval(game._teamBuffTimer);game._teamBuffTimer=setInterval(()=>{if(game.finished)return;if(game.online&&game.role!=='host')return;let changed=false;Object.keys(game.teamBuffTurns||{}).forEach(r=>{if(game.teamBuffTurns[r]>0){game.teamBuffTurns[r]=Math.max(0,game.teamBuffTurns[r]-1);changed=true;}});if(changed&&game.online&&game.role==='host')onlineBattleState();},1000)}
+function onlineBattleState(){if(!game.online||game.role!=='host')return;onlineSend({type:'battleState',eh:game.eh,em:game.em,stageMoney:game.stageMoney,teamHp:game.teamHp,teamDead:game.teamDead,reviveTimers:game.reviveTimers,teamSpectator:game.teamSpectator,teamShieldHits:game.teamShieldHits,teamBuffTurns:game.teamBuffTurns,enemyStunUntil:game.enemyStunUntil||0,enemyControlUntil:game.enemyControlUntil||0,enemyStunned:game.enemyStunned,enemySlowed:game.enemySlowed,enemyStatusEffects:game.enemyStatusEffects||[],stageWave:game.stageWave||1,storyBattle:game.storyBattle||false,boss:game.boss,bossLevel:game.bossLevel||1,bossElements:game.bossElements||[],finished:game.finished,earned:game._lastEarned||0})}
+function onlineSetMyHp(){if(!game.online)return;game.teamHp[game.role]=game.hp;if(game.role==='host')onlineBattleState();else onlineSend({type:'playerHp',hp:game.hp})}
+function showDeathOverlay(deadRole){const me=game.role;if(deadRole!==me){hideDeathOverlay();return}const left=Math.max(0,game.reviveTimers[deadRole]||20);const cost=Math.floor(game.stageMoney*.10);$('#deadOverlay').classList.add('show');$('#deadTitle').textContent='💀 '+game.name+' đã chết';$('#deadText').textContent='Bạn có muốn tự hồi sinh không? Chi phí: 10% tiền đang kiếm trong màn. Còn '+left+' giây.';$('#deadActions').innerHTML=`<button onclick="reviveSelf()">❤️ Tự hồi sinh ${cost>0?'(-'+cost+' 💰)':'(miễn phí)'} </button> <button onclick="declineRevive()" style="margin-left:8px;border-color:#475569;background:#111827">❌ Không hồi sinh</button>`}
+function hideDeathOverlay(){$('#deadOverlay').classList.remove('show')}
+function startReviveCountdown(role){game.reviveTimers[role]=20;clearInterval(game['_reviveTimer_'+role]);game['_reviveTimer_'+role]=setInterval(()=>{if(!game.teamDead[role]){clearInterval(game['_reviveTimer_'+role]);return}game.reviveTimers[role]=Math.max(0,game.reviveTimers[role]-1);if(game.reviveTimers[role]<=0){clearInterval(game['_reviveTimer_'+role]);hideDeathOverlay();toast('💀 Hết thời gian hồi sinh.');if(game.teamDead.host&&game.teamDead.guest&&game.reviveTimers.host<=0&&game.reviveTimers.guest<=0){finish(false);return}}showDeathOverlay(role);if(game.role==='host')onlineBattleState()},1000)}
+function setSpectatorMode(role){
+  game.teamSpectator[role]=true;
+  if(role===game.role){
+    game.spectator=true;
+    hideDeathOverlay();
+    $('#answers').style.pointerEvents='none';
+    $('#answers').style.opacity='.45';
+    $('#selfReviveStatus').textContent='👻 Bạn đang ở chế độ KHÁN GIẢ • Theo dõi đồng đội';
+    $('#log').textContent='👻 Bạn đã chọn không hồi sinh. Đang ở chế độ khán giả.';
+    toast('👻 Bạn đã chuyển sang chế độ khán giả.');
+  }
+  renderTeam();
+  if(game.role==='host')onlineBattleState();
+}
+function markDead(role){
+  game.teamDead[role]=true;
+  game.teamHp[role]=0;
+  game.teamSpectator[role]=false;
+  game.reviveTimers[role]=20;
+  if(role===game.role){
+    game.spectator=false;
+    $('#answers').style.pointerEvents='none';
+    $('#answers').style.opacity='1';
+  }
+  showDeathOverlay(role);
+  startReviveCountdown(role);
+  if(game.role==='host')onlineBattleState();
+  else onlineSend({type:'playerDead'});
+}
+function reviveSelf(){
+  if(!game.online||!game.teamDead[game.role]||game.reviveTimers[game.role]<=0)return;
+  const cost=Math.floor(game.stageMoney*.10);
+  if(game.role==='host'){
+    game.stageMoney=Math.max(0,game.stageMoney-cost);
+    applyRevive(game.role,cost);
+  }else{
+    onlineSend({type:'reviveSelf',fromRole:game.role});
+  }
+}
+function declineRevive(){
+  if(!game.teamDead[game.role])return;
+  setSpectatorMode(game.role);
+  if(game.role==='host'){
+    onlineBattleState();
+  }else{
+    onlineSend({type:'declineRevive',fromRole:game.role});
+  }
+}
+function applyRevive(role,cost){
+  game.teamDead[role]=false;
+  game.teamSpectator[role]=false;
+  game.reviveTimers[role]=0;
+  clearInterval(game['_reviveTimer_'+role]);
+  if(role===game.role){
+    game.spectator=false;
+    game.hp=100;
+    hideDeathOverlay();
+    bars();
+    $('#answers').style.pointerEvents='auto';
+    $('#answers').style.opacity='1';
+    $('#selfReviveStatus').textContent='';
+    question();
+  }else{
+    renderTeam();
+  }
+  $('#stageMoney').textContent=game.stageMoney;
+  onlineBattleState();
+  toast('❤️ '+((game.players.find(p=>p.role===role)||{}).name||'Người chơi')+' đã tự hồi sinh! -'+cost+' 💰');
+}
+window.reviveSelf=reviveSelf;
+window.declineRevive=declineRevive;
+function hideDeathOverlay(){$('#deadOverlay').classList.remove('show')}
+function startReviveCountdown(role){
+  game.reviveTimers[role]=20;
+  clearInterval(game['_reviveTimer_'+role]);
+  game['_reviveTimer_'+role]=setInterval(()=>{
+    if(!game.teamDead[role]){
+      clearInterval(game['_reviveTimer_'+role]);
+      return;
+    }
+    game.reviveTimers[role]=Math.max(0,game.reviveTimers[role]-1);
+    if(game.reviveTimers[role]<=0){
+      clearInterval(game['_reviveTimer_'+role]);
+      if(!game.teamSpectator[role]){
+        setSpectatorMode(role);
+      }else{
+        hideDeathOverlay();
+      }
+      if(game.teamDead.host&&game.teamDead.guest&&game.reviveTimers.host<=0&&game.reviveTimers.guest<=0){
+        finish(false);
+        return;
+      }
+    }
+    if(!game.teamSpectator[role])showDeathOverlay(role);
+    if(game.role==='host')onlineBattleState();
+  },1000);
+}
+function renderOnlineLobby(){
+ $('#roomLabel').textContent=game.room||'-';
+ $('#playerCount').textContent=game.players.length+'/2';
+ $('#playerList').innerHTML=game.players.length?game.players.map((p,i)=>`<div class="playercard ${p.id===(game.role==='host'?'host':'guest')?'me':''}"><b>${i===0?'👑 ':''}${p.name}</b><br><small class="muted">${p.role==='host'?'Chủ phòng':'Người chơi'}</small></div>`).join(''):'<div class="muted">Chưa có người chơi.</div>';
+ const ready=game.players.length===2;
+ $('#modeVotePanel').style.display=ready?'block':'none';
+ const sv=Object.values(game.modeVotes).filter(v=>v==='story').length,bv=Object.values(game.modeVotes).filter(v=>v==='boss').length;
+ $('#voteStoryCount').textContent=sv+'/2';$('#voteBossCount').textContent=bv+'/2';
+ $('#voteStory').classList.toggle('selected',game.modeVotes[game.role||'guest']==='story');$('#voteBoss').classList.toggle('selected',game.modeVotes[game.role||'guest']==='boss');
+ if(ready&&sv===2)$('#modeVoteHint').textContent='✅ Cả 2 đã chọn Cốt truyện. Đang mở màn...';
+ else if(ready&&bv===2)$('#modeVoteHint').textContent='✅ Cả 2 đã chọn Siêu Boss. Đang mở hiệu ứng...';
+ else $('#modeVoteHint').textContent='Cả 2 phải chọn cùng một chế độ. Hiện tại: Cốt truyện '+sv+'/2 • Siêu Boss '+bv+'/2.';
+ const storyMode=ready&&sv===2;
+ $('#onlineStagePanel').style.display=storyMode?'block':'none';
+ $('#onlineBossPanel').style.display=ready&&bv===2?'block':'none';
+ if(storyMode)renderOnlineStages();
+ if(ready&&bv===2){$('#onlineBossEffectStatus').textContent=(game.superEffects.length===2?'Đã chọn 2 hiệu ứng của bạn.':'Chưa chọn 2 hiệu ứng'); if(game.online && game.superEffects.length!==2 && !game._openedOnlineBossEffects){game._openedOnlineBossEffects=true; setTimeout(()=>chooseOnlineEffects(),0)}} else game._openedOnlineBossEffects=false;
+}
+function connectHost(c){
+ if(online.connections.length>=1){c.on('open',()=>c.send({type:'full',ok:false,msg:'Phòng đã đủ 2 người.'}));return}
+ c.metaPlayer={id:'guest',name:'Đang kết nối',role:'guest'};online.connections=[c];game.conn=c;
+ c.on('open',()=>{c.send({type:'state',players:[{id:'host',name:game.name,role:'host'}],modeVotes:game.modeVotes,stageVotes:game.stageVotes});});
+ c.on('data',handleOnlineMessage);c.on('close',()=>{online.connections=online.connections.filter(x=>x!==c);game.conn=null;game.players=[{id:'host',name:game.name,role:'host'}];game.modeVotes={};game.stageVotes={};renderOnlineLobby();toast('🔌 Người chơi đã rời phòng.');});
+}
+function handleOnlineMessage(m){
+ if(!m)return;
+ if(m.type==='hello'&&game.role==='host'){const c=game.conn||online.connections[0];if(c)c.metaPlayer={id:'guest',name:m.name||'Người chơi 2',role:'guest'};game.players=[{id:'host',name:game.name,role:'host'},{id:'guest',name:m.name||'Người chơi 2',role:'guest'}];onlineBroadcastState();return}
+ if(m.type==='state'&&game.role==='guest'){game.players=m.players||[];game.modeVotes=m.modeVotes||{};game.stageVotes=m.stageVotes||{};renderOnlineLobby();return}
+ if(m.type==='voteMode'&&game.role==='host'){game.modeVotes.guest=m.mode;onlineBroadcastState();checkModeVote();return}
+ if(m.type==='voteStage'&&game.role==='host'){game.stageVotes.guest=m.stage;onlineBroadcastState();checkStageVote();return}
+ if(m.type==='effects'&&game.role==='host'){game.onlineEffects.guest=m.effects||[];onlineBroadcastState();checkBossEffects();return}
+ if(m.type==='startStage'){game.stage=m.stage;game.online=true;startStoryStage(m.stage);return}
+ if(m.type==='startBoss'){game.online=true;game.superEffects=game.onlineEffects[game.role]||game.superEffects;start(true);return}
+ if(m.type==='battleState'&&game.role==='guest'){game.eh=m.eh;game.em=m.em;game.stageMoney=m.stageMoney||0;game.teamHp=m.teamHp||game.teamHp;if(game.role==='guest'&&game.teamHp.guest!=null)game.hp=game.teamHp.guest;game.teamDead=m.teamDead||game.teamDead;game.reviveTimers=m.reviveTimers||game.reviveTimers;game.teamSpectator=m.teamSpectator||game.teamSpectator;game.spectator=!!game.teamSpectator[game.role];game.teamShieldHits=m.teamShieldHits||game.teamShieldHits;game.teamBuffTurns=m.teamBuffTurns||game.teamBuffTurns;game.enemyStunUntil=m.enemyStunUntil||0;game.enemyControlUntil=m.enemyControlUntil||0;game.enemyStunned=!!m.enemyStunned;game.enemySlowed=!!m.enemySlowed;game.enemyStatusEffects=m.enemyStatusEffects||[];game.stageWave=m.stageWave||game.stageWave||1;game.storyBattle=!!m.storyBattle;game.boss=!!m.boss;game.bossLevel=m.bossLevel||1;game.bossElements=m.bossElements||[];$('#ename').textContent=game.storyBattle?`Màn ${game.stage} • Ải ${game.stageWave} • ${game.boss?'BOSS':'Quái'}`:(game.boss?'Super Boss':`Màn ${game.stage} • Quái`);bars();renderTeam();if(game.teamSpectator[game.role])setSpectatorMode(game.role);else if(game.teamDead[game.role])showDeathOverlay(game.role);else if(game.teamDead.host||game.teamDead.guest)showDeathOverlay(game.teamDead.host?'host':'guest');if(m.finished&&!game.finished){game._lastEarned=m.earned||0;finish(true)}return}
+ if(m.type==='playerHp'&&game.role==='host'){game.teamHp.guest=m.hp;game.teamDead.guest=m.hp<=0;if(game.teamDead.guest)markDead('guest');onlineBattleState();return}
+ if(m.type==='playerDead'&&game.role==='host'){markDead('guest');return}
+ if(m.type==='declineRevive'&&game.role==='host'){const target=m.fromRole||'guest';if(game.teamDead[target])setSpectatorMode(target);return}
+ if(m.type==='reviveSelf'&&game.role==='host'){const target=m.fromRole||'guest';if(game.teamDead[target]&&game.reviveTimers[target]>0){const cost=Math.floor(game.stageMoney*.10);game.stageMoney=Math.max(0,game.stageMoney-cost);applyRevive(target,cost)}return}
+ if(m.type==='reviveSelf'&&game.role==='guest')return
+ if(m.type==='enemyHit'&&game.role==='host'){const hit={physical:m.physical||0,elemental:m.elemental||{},total:m.total||m.damage||0,crit:!!m.crit,doubleHit:!!m.doubleHit,stun:!!m.stun,control:!!m.control,earthShield:Number(m.earthShield)||0,teamHealPct:Number(m.teamHealPct)||0,teamBuff:!!m.teamBuff,effect:Number(m.effect)||0,effectParts:m.effectParts||[],statusEffects:m.statusEffects||[],fromRole:m.fromRole||'guest'};applyEnemyDamage(hit); const se=getEquippedSpecialEffect(); if(se&&se.id==='lifesteal'&&Math.random()<(game.characterRarity==='rarV'?.50:game.characterRarity==='rarR'?.40:game.characterRarity==='rarO'?.30:.20)){const pct=game.characterRarity==='rarV'?.10+Math.random()*.05:game.characterRarity==='rarR'?.08+Math.random()*.04:game.characterRarity==='rarO'?.05+Math.random()*.03:.03+Math.random()*.02;const heal=Math.max(1,Math.round(calcStats().hp*pct));const before=game.hp;game.hp=Math.min(calcStats().hp,game.hp+heal);game.teamHp[game.role]=game.hp;healVfx(game.hp-before);} showDamageFx(damageParts(hit));return}
+}
+function checkModeVote(){if(game.players.length<2)return;const a=game.modeVotes.host,b=game.modeVotes.guest;if(a&&a===b){if(a==='story'){game.stageVotes={};onlineBroadcastState();renderOnlineLobby();}else{game.onlineEffects={host:[],guest:[]};onlineBroadcastState();renderOnlineLobby();}}}
+function voteMode(mode){if(game.players.length<2){toast('👥 Cần đủ 2/2 người trước.');return}game.modeVotes[game.role]=mode;onlineSend({type:'voteMode',mode});if(game.role==='host')onlineBroadcastState();renderOnlineLobby();if(game.role==='host')checkModeVote()}
+function renderOnlineStages(){const g=$('#onlineStageGrid');if(!g)return;g.innerHTML='';for(let i=1;i<=200;i++){const b=document.createElement('button');b.className='stage '+(game.stageVotes[game.role]===i?'done':'');b.innerHTML=`<b>🎮 Màn ${i}</b><small>Vote: ${Object.values(game.stageVotes).filter(v=>v===i).length}/2</small>`;b.onclick=()=>voteStage(i);g.appendChild(b)}}
+function voteStage(n){game.stageVotes[game.role]=n;onlineSend({type:'voteStage',stage:n});if(game.role==='host')onlineBroadcastState();renderOnlineLobby();if(game.role==='host')checkStageVote()}
+function checkStageVote(){if(game.players.length<2)return;const a=game.stageVotes.host,b=game.stageVotes.guest;if(a&&a===b){onlineBroadcastState();onlineSend({type:'startStage',stage:a});game.online=true;startStoryStage(a)}}
+function checkBossEffects(){if(game.players.length<2)return;const a=game.onlineEffects.host||[],b=game.onlineEffects.guest||[];if(a.length===2&&b.length===2){onlineBroadcastState();onlineSend({type:'startBoss'});game.superEffects=game.onlineEffects[game.role]||[];start(true)}}
+function chooseOnlineEffects(){game._openedOnlineBossEffects=true;openBossSetup();game.onlineEffects[game.role]=game.superEffects;$('#effectConfirm').textContent='💾 Lưu 2 hiệu ứng';$('#effectConfirm').disabled=false;$('#effectConfirm').onclick=()=>{if(game.superEffects.length!==2){toast('✨ Chọn đúng 2 hiệu ứng!');return}game.onlineEffects[game.role]=game.superEffects.slice();onlineSend({type:'effects',effects:game.superEffects});if(game.role==='host'){onlineBroadcastState();checkBossEffects();}$('#onlineBossEffectStatus').textContent='Đã chọn: '+game.superEffects.map(id=>bossEffects.find(x=>x.id===id)?.name||id).join(' + ');game._openedOnlineBossEffects=false;show('onlineLobby');$('#effectConfirm').textContent='⚔️ Bắt đầu đánh Boss';};}
+function openOnline(){game.online=true;show('onlineLobby');renderOnlineLobby()}
+function createRoom(){if(typeof Peer==='undefined'){toast('🌐 Không tải được kết nối online.');return}const name=$('#roomInput').value.trim();if(!name){toast('✏️ Nhập tên phòng trước.');return}const id=roomKey(name);game.room=name;game.role='host';game.players=[{id:'host',name:game.name,role:'host'}];game.modeVotes={};game.stageVotes={};game.peer=new Peer(id);game.peer.on('open',()=>{game.online=true;$('#roomStatus').textContent='Phòng đã tạo. Chờ người chơi 2 join...';openOnline();});game.peer.on('connection',connectHost);game.peer.on('error',e=>toast('🌐 '+(e.type==='unavailable-id'?'Tên phòng đã tồn tại. Hãy chọn tên khác.':'Lỗi kết nối.')))}
+function joinRoom(){if(typeof Peer==='undefined'){toast('🌐 Không tải được kết nối online.');return}const name=$('#roomInput').value.trim();if(!name){toast('✏️ Nhập đúng tên phòng trước.');return}game.room=name;game.role='guest';game.peer=new Peer();game.peer.on('open',()=>{const c=game.peer.connect(roomKey(name));game.conn=c;c.on('open',()=>{game.online=true;c.send({type:'hello',name:game.name});$('#roomStatus').textContent='Đã join phòng. Chờ đủ 2/2 người và vote.';openOnline()});c.on('data',handleOnlineMessage);c.on('close',()=>{toast('🔌 Mất kết nối chủ phòng.');});c.on('error',()=>toast('🌐 Không join được phòng.'));});game.peer.on('error',()=>toast('🌐 Không tìm thấy phòng hoặc phòng đã đóng.'))}
+function leaveOnline(){try{if(game.conn)game.conn.close();if(game.peer)game.peer.destroy()}catch(e){}game.online=false;game.role='';game.room='';game.players=[];game.modeVotes={};game.stageVotes={};game.conn=null;game.peer=null;online.connections=[];show('home')}
+const BOSS_ELEMENTS=['fire','water','wind','earth','lightning','grass','ice'];
+const BOSS_ELEMENT_NAMES={fire:'🔥 Lửa',water:'💧 Thủy',wind:'🌪️ Phong',earth:'🪨 Nham',lightning:'⚡ Lôi',grass:'🌿 Thảo',ice:'❄️ Băng'};
+function bossElementCount(level){if(level<15)return 0;if(level<30)return 1;if(level<50)return 2;if(level<80)return 3;return 5}
+function rollBossElements(level,countOverride=null){const n=countOverride==null?bossElementCount(level):Math.min(BOSS_ELEMENTS.length,countOverride);return BOSS_ELEMENTS.slice().sort(()=>Math.random()-.5).slice(0,n)}
+function setBossProfile(level){game.bossLevel=Math.min(200,Math.max(1,level));game.bossElements=rollBossElements(game.bossLevel)}
+function setSuperBossProfile(index){const sb=SUPER_BOSS_DATA[Math.min(10,Math.max(1,index))-1];game.bossLevel=sb.level;game.bossElements=rollBossElements(sb.level,sb.elements);game.superBossMechanic=sb.name;game.superBossMechanicDesc=sb.desc;game.superBossMaxHp=sb.hp}
+function bossElementText(){return game.bossElements.length?game.bossElements.map(e=>BOSS_ELEMENT_NAMES[e]).join(' + '):'Không có nguyên tố'}
+function levelXpNeed(level){return 100+(level-1)*50}
+function grantXP(amount){
+ if(amount<=0||game.level>=200)return;
+ game.xp+=Math.max(0,Math.round(amount));
+ let leveled=false;
+ while(game.level<200&&game.xp>=levelXpNeed(game.level)){
+   game.xp-=levelXpNeed(game.level);game.level++;game.levelXp=levelXpNeed(game.level);leveled=true;
+ }
+ if(game.level>=200){game.level=200;game.xp=0;game.levelXp=0}
+ if(leveled){toast(`⬆️ LEVEL UP! Nhân vật đạt Lv.${game.level}`);combatVfx('crit',`⭐ LEVEL ${game.level}!`)}
+ stats();wallet();
+}
+function rewardEnemyOnce(){
+ if(game._enemyRewarded)return;
+ game._enemyRewarded=true;
+ const xp=enemyExpReward();
+ grantXP(xp);
+ toast(`✨ Hạ ${game.boss?'Boss':'quái'} • +${xp} EXP`);
+}
+function enemyExpReward(){ return game.boss ? 100 + game.bossLevel*5 : 20 + game.bossLevel; }
+function updateEnemyLabel(){
+ const el=$('#bossLevelLabel');if(el)el.textContent=game.boss?(game.storyBattle?`Boss Lv.${game.bossLevel} • ${bossElementText()} • +${enemyExpReward()} EXP`:`Siêu Boss ${game.superBossIndex}/10 • Lv.${game.bossLevel} • ${bossElementText()} • ${game.superBossMechanic||'Hiệu ứng đặc biệt'} • +${enemyExpReward()} EXP`):`Quái Lv.${game.bossLevel} • +${enemyExpReward()} EXP`;
+ const name=$('#ename');
+ if(name){if(game.storyBattle)name.textContent=`Màn ${game.stage} • Ải ${game.stageWave} • ${game.boss?'BOSS Lv.'+game.bossLevel:'Quái Lv.'+game.bossLevel}`;else name.textContent=game.boss?`Super Boss Lv.${game.bossLevel}`:`Màn ${game.stage} • Quái Lv.${game.bossLevel}`}
+}
+function wallet(){saveProfile();$('#money').textContent=game.money.toLocaleString('vi-VN');$('#dia').textContent=game.dia;$('#bagN').textContent=game.backpack.length;updateBackpackUI();let sm=$('#stageMoney');if(sm)sm.textContent=game.stageMoney.toLocaleString('vi-VN');let cn=$('#charName');if(cn)cn.textContent=game.name;let ni=$('#nameInput');if(ni)ni.value=game.name;let pb=$('#playerNameBattle');if(pb)pb.textContent=game.name;const cl=$('#charLevel');if(cl)cl.textContent=game.level;const cx=$('#charXp');if(cx)cx.textContent=game.level>=200?'MAX':`${game.xp}/${levelXpNeed(game.level)}`;const bl=$('#battleLevel');if(bl)bl.textContent=game.level;renderTeam()}
+function bars(){$('#ph').textContent=game.hp; if($('#phpMax'))$('#phpMax').textContent=calcStats().hp;const maxHp=calcStats().hp;$('#php').style.width=Math.max(0,game.hp)/maxHp*100+'%';$('#eh').textContent=game.eh;$('#em').textContent=game.em;$('#ehpbar').style.width=game.em?Math.max(0,game.eh)/game.em*100+'%':'0%';$('#stageMoney').textContent=game.stageMoney.toLocaleString('vi-VN');updateEnemyLabel();renderTeam()}
+function renderTeam(){const box=$('#onlineTeam');if(!box)return;box.classList.toggle('show',!!game.online);if(!game.online)return;const me=game.role||'host',mate=me==='host'?'guest':'host';const mp=game.players.find(p=>p.role===me)||{name:game.name};const tp=game.players.find(p=>p.role===mate)||{name:'Đồng đội'};const mh=game.teamHp[me]??game.hp,th=game.teamHp[mate]??200;const md=!!game.teamDead[me],td=!!game.teamDead[mate];$('#teamMe').className='teamcard'+(md?' dead':'');$('#teamMate').className='teamcard'+(td?' dead':'');$('#teamMe').innerHTML=`🧑‍🚀 <b>${mp.name}</b><br>❤️ ${Math.max(0,mh)}/200 ${md?'💀 ĐÃ CHẾT':''}`;$('#teamMate').innerHTML=`🧑‍🚀 <b>${tp.name}</b><br>❤️ ${Math.max(0,th)}/200 ${td?'💀 ĐÃ CHẾT':''}`;$('#selfReviveStatus').textContent=md?'💀 Bạn đã chết, chờ hồi sinh...':''}
+const qs=[];
+const recentQuestions=[];
+let questionTimer=null,questionDeadline=0,questionStartedAt=0;
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t}return a}
+function frac(n,d){const g=gcd(n,d);n/=g;d/=g;return d===1?String(n):`${n}/${d}`}
+function makeQuadratic(){
+ let a=1+Math.floor(Math.random()*3),r1=-6+Math.floor(Math.random()*13),r2=-6+Math.floor(Math.random()*13);
+ while(r1===r2&&Math.random()<.65)r2=-6+Math.floor(Math.random()*13);
+ const b=-a*(r1+r2),c=a*r1*r2,key=`${a}|${b}|${c}|${r1}|${r2}`;
+ if(recentQuestions.includes(key))return makeQuadratic();
+ recentQuestions.push(key);if(recentQuestions.length>30)recentQuestions.shift();
+ const A=a===1?'x²':`${a}x²`,bs=b===0?'':(b===1?'+ x':b===-1?'− x':b>0?`+ ${b}x`:`− ${Math.abs(b)}x`),cs=c===0?'':(c>0?`+ ${c}`:`− ${Math.abs(c)}`);
+ const correct=[frac(r1,1),frac(r2,1)].sort(),text=`${A} ${bs} ${cs} = 0`.replace(/\s+/g,' ').trim();
+ const ds=[[frac(-r1,1),frac(r2,1)],[frac(r1+1,1),frac(r2-1,1)],[frac(r1*2,1),frac(r2*2,1)],[frac(r1,1),frac(-r2,1)],[frac(r1+1,1),frac(r2+1,1)],[frac(r1-1,1),frac(r2+1,1)]];
+ const opts=[[`x = ${correct[0]}; ${correct[1]}`,true]];
+ for(const d of ds){const label=`x = ${[...d].sort().join('; ')}`;if(!opts.some(o=>o[0]===label))opts.push([label,false]);if(opts.length>=4)break}
+ while(opts.length<4)opts.push([`x = ${Math.floor(Math.random()*13)-6}; ${Math.floor(Math.random()*13)-6}`,false]);
+ for(let i=opts.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[opts[i],opts[j]]=[opts[j],opts[i]]}
+ return [text,opts.map(o=>o[0]),opts.findIndex(o=>o[1]),key];
+}
+for(let i=0;i<80;i++)qs.push(makeQuadratic());
+function stopQuestionTimer(){if(questionTimer){clearInterval(questionTimer);questionTimer=null}}
+function startQuestionTimer(){
+ stopQuestionTimer();questionStartedAt=Date.now();questionDeadline=questionStartedAt+30000;const el=$('#answerTimer');
+ const tick=()=>{if(!el)return;const left=Math.max(0,questionDeadline-Date.now()),sec=Math.ceil(left/1000);
+ el.textContent=`⏱️ ${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+ el.classList.toggle('warning',sec<=30&&sec>10);el.classList.toggle('danger',sec<=10);
+ if(left<=0){stopQuestionTimer();if($('#answers').style.pointerEvents!=='none'){game.combo=0;$('#answers').style.pointerEvents='none';toast('⏰ HẾT 30 GIÂY! Bắn trượt!');$('#log').textContent='Hết 30 giây. Không chọn đáp án nên phát bắn bị trượt.';
+ setTimeout(()=>{if(game.hp>0&&game.eh>0&&!game.teamDead[game.role]&&!game.spectator){$('#answers').style.pointerEvents='auto';attack();setTimeout(()=>{if(game.hp>0&&game.eh>0&&!game.teamDead[game.role])question()},550)}},350)}}};
+ tick();questionTimer=setInterval(tick,250);
+}
+function question(){
+ stopQuestionTimer();const x=qs.shift();qs.push(makeQuadratic());
+ $('#q').textContent=x[0];$('#answers').innerHTML='';$('#answers').style.pointerEvents=game.spectator?'none':'auto';$('#answers').style.opacity=game.spectator?'.45':'1';
+ x[1].forEach((a,i)=>{const b=document.createElement('button');b.className='ans';b.textContent=String.fromCharCode(65+i)+'. '+a;b.onclick=()=>{stopQuestionTimer();answer(i===x[2])};$('#answers').appendChild(b)});startQuestionTimer();
+}
+
+function showDamageFx(parts){const host=$('#damageFx');if(!host)return;host.innerHTML='';parts.forEach((p,i)=>{if(!p||p.value<=0)return;let d=document.createElement('div');d.className='dmgFloat '+(p.cls||'');d.style.top=(40+i*26)+'%';d.innerHTML=p.html;host.appendChild(d);setTimeout(()=>d.remove(),850)})}
+function combatVfx(type='hit',text=''){
+ const arena=$('.battleCenter'), enemy=$('#enemy'); if(!arena||!enemy)return;
+ arena.classList.remove('vfx-shake'); void arena.offsetWidth; arena.classList.add('vfx-shake');
+ const clsMap={fire:'vfx-fire',ice:'vfx-ice',lightning:'vfx-stun',water:'vfx-water',wind:'vfx-wind',grass:'vfx-grass',earth:'vfx-earth',crit:'vfx-crit',stun:'vfx-stun',hit:'vfx-hit'};
+ const cls=clsMap[type]||'vfx-hit'; enemy.className='boss '+cls; clearTimeout(enemy._vfxTimer); enemy._vfxTimer=setTimeout(()=>enemy.className='boss',800);
+ const ring=document.createElement('div');ring.className='vfx-ring';ring.style.borderColor={fire:'#ef4444',ice:'#67e8f9',lightning:'#a855f7',water:'#38bdf8',wind:'#7dd3fc',grass:'#22c55e',earth:'#a16207',crit:'#facc15'}[type]||'#fff';arena.appendChild(ring);setTimeout(()=>ring.remove(),600);
+ const icons={fire:'🔥',ice:'❄️',lightning:'⚡',water:'💧',wind:'🌪️',grass:'🌿',earth:'🪨',crit:'💥',hit:'✦'};for(let i=0;i<7;i++){const p=document.createElement('div');p.className='vfx-particle';p.textContent=icons[type]||'✦';p.style.setProperty('--dx',`${Math.round((Math.random()-.5)*180)}px`);p.style.setProperty('--dy',`${Math.round((Math.random()-.5)*120-50)}px`);p.style.animationDelay=`${i*25}ms`;arena.appendChild(p);setTimeout(()=>p.remove(),850)}
+ if(text){const b=document.createElement('div');b.className='vfx-banner '+(type==='lightning'?'lightning':type==='crit'?'gold':type);b.textContent=text;arena.appendChild(b);setTimeout(()=>b.remove(),950)}
+}
+function healVfx(amount){const arena=$('.battleCenter');if(!arena)return;const h=document.createElement('div');h.className='vfx-heal';h.textContent='💚 +'+amount+' HP';arena.appendChild(h);setTimeout(()=>h.remove(),950)}
+function shieldVfx(){const arena=$('.battleCenter');if(!arena)return;const s=document.createElement('div');s.className='vfx-shield';arena.appendChild(s);setTimeout(()=>s.remove(),1150)}
+function calculatePlayerHit(){
+ let st=calcStats();let physical=st.dmg;let crit=Math.random()<(st.crit/100);if(crit)physical=Math.round(physical*(st.critDmg/100));
+ let elemental=game.boss?{...st.elements}:{};
+ let hit={physical,elemental,total:physical,crit,st,doubleHit:false,stun:false,control:false,earthShield:0,effect:0,effectParts:[],statusEffects:[],teamHealPct:0,teamBuff:false};
+ // Hiệu ứng nguyên tố cơ bản: 100% proc, 3 giây.
+ Object.keys(st.elementSet).forEach(el=>{
+   if(!st.elementSet[el]||!(elemental[el]>0))return;
+   if(true){
+     const effectDamage=Math.max(1,Math.round(elemental[el]*0.10));
+     hit.effect+=effectDamage;hit.effectParts.push({element:el,value:effectDamage});hit.statusEffects.push({element:el,damage:effectDamage,remaining:2});
+   }
+ });
+ // Thủy: đúng đáp án -> hồi 15% HP tối đa cho cả đội.
+ if(st.elementSet.water)hit.teamHealPct=.05+Math.random()*.05;
+ // Băng/Lôi: đúng 2 đáp án liên tiếp -> khống chế/choáng 5 giây.
+ if(game.combo>=2){
+   if(st.elementSet.ice)hit.control=true;
+   if(st.elementSet.lightning)hit.stun=true;
+ }
+ // Nham: đúng 3 đáp án liên tiếp -> khiên cả đội, chắn 4–5 đòn.
+ if(game.combo>=3&&st.elementSet.earth)hit.earthShield=4+Math.floor(Math.random()*2);
+ // Thảo: đúng 3 đáp án liên tiếp -> buff cả đội 20 giây.
+ if(game.combo>=3&&st.elementSet.grass)hit.teamBuff=true;
+ if(game.boss||game.eh>0){
+   if(st.doubleHit&&Math.random()<st.doubleHit){hit.doubleHit=true;hit.physical*=2;hit.elemental=Object.fromEntries(Object.entries(hit.elemental).map(([k,v])=>[k,v*2]));}
+ }
+ hit.total=hit.physical+Object.values(hit.elemental).reduce((a,b)=>a+b,0)+hit.effect;
+ return hit;
+}
+function damageParts(hit){
+ const colors={fire:'element-fire',ice:'element-ice',lightning:'element-lightning',water:'element-water',wind:'element-wind',grass:'element-grass',earth:'element-earth'};
+ const names={fire:'🔥 Lửa',ice:'❄️ Băng',lightning:'⚡ Lôi',water:'💧 Thủy',wind:'🌪️ Phong',grass:'🌿 Thảo',earth:'🪨 Nham'};
+ let parts=[{value:hit.physical,html:`⚔️ ST VL -${hit.physical}${hit.crit?' 💥':''}`,cls:''}];
+ Object.entries(hit.elemental||{}).forEach(([k,v])=>{if(v>0)parts.push({value:v,html:`${names[k]} -${v}`,cls:colors[k]})});
+ (hit.effectParts||[]).forEach(x=>{parts.push({value:x.value,html:`${names[x.element]} hiệu ứng -${x.value}`,cls:colors[x.element]})});
+ return parts;
+}
+function applyElementStatus(status){
+ if(!status||!status.element||status.damage<=0)return;
+ const names={fire:'Thiêu đốt',lightning:'Nhiễm điện',ice:'Đông cứng',wind:'Gào xé',water:'Ẩm ướt',earth:'Chấn áp',grass:'Quấn chân'};
+ const icons={fire:'🔥',lightning:'⚡',ice:'❄️',wind:'🌪️',water:'💧',earth:'🪨',grass:'🌿'};
+ const existing=game.enemyStatusEffects.find(x=>x.element===status.element);
+ if(existing){existing.damage=status.damage;existing.remaining=3;}else game.enemyStatusEffects.push({element:status.element,damage:status.damage,remaining:3});
+ toast(`${icons[status.element]} ${names[status.element]}: ${status.damage} ST hiệu ứng/giây • 3 giây`);
+ combatVfx(status.element,`${icons[status.element]} ${names[status.element]}!`);
+}
+function tickEnemyStatuses(){
+ if(game.eh<=0||!game.enemyStatusEffects?.length)return;
+ const active=[];
+ game.enemyStatusEffects.forEach(st=>{
+   if(st.remaining<=0)return;
+   game.eh=Math.max(0,Math.round(game.eh-st.damage));
+   const p={value:st.damage,html:`${({fire:'🔥',lightning:'⚡',ice:'❄️',wind:'🌪️',water:'💧',earth:'🪨',grass:'🌿'})[st.element]||'✨'} Hiệu ứng -${st.damage}`,cls:'element-'+({fire:'fire',lightning:'lightning',ice:'ice',wind:'wind',water:'water',earth:'earth',grass:'grass'})[st.element]};
+   showDamageFx([p]);
+   combatVfx(st.element);
+   st.remaining--;
+   if(st.remaining>0)active.push(st);
+ });
+ game.enemyStatusEffects=active;
+ bars();
+ if(game.eh<=0){rewardEnemyOnce();addStageMoney(game.boss?150:Math.floor(5+Math.random()*11));if(storyWaveCleared())return;onlineBattleState();finish(true);return}
+ onlineBattleState();
+}
+function startEnemyStatusTicker(){
+ clearInterval(game._statusTimer);
+ game._statusTimer=setInterval(()=>{if(!game.finished&&game.eh>0&&game.enemyStatusEffects?.length)tickEnemyStatuses();},1000);
+}
+
+function getEquippedSpecialEffect(){const x=game.equipped&&game.equipped.special;return x&&x.supportGear&&x.specialEffect?x.specialEffect:null}
+function specialOutgoingDamage(amount){const e=getEquippedSpecialEffect();if(!e)return amount;let a=amount;if(e.id==='bossBreaker'&&game.boss)a=Math.round(a*(1+(game.characterRarity==='rarV'?0.15:game.characterRarity==='rarR'?0.10:0.08)+Math.random()*0.05));if(e.id==='overdrive'&&game.hp<=calcStats().hp*.40)a=Math.round(a*(1.20+Math.random()*.10));return a}
+function specialIncomingDamage(amount){const e=getEquippedSpecialEffect();if(!e)return amount;let a=amount,now=Date.now(),cd=game.specialCooldowns[e.id]||0;
+ if(e.id==='guard'){const threshold=game.characterRarity==='rarV'?.50:game.characterRarity==='rarR'?.40:game.characterRarity==='rarO'?.35:.30;if(game.hp<=calcStats().hp*threshold&&now>cd){const red=game.characterRarity==='rarV'?.25:game.characterRarity==='rarR'?.18:game.characterRarity==='rarO'?.12:.08;a=Math.round(a*(1-red));game.specialCooldowns[e.id]=now+(game.characterRarity==='rarV'?15000:game.characterRarity==='rarR'?18000:game.characterRarity==='rarO'?20000:25000);}}
+ return a}
+
+function applyEnemyDamage(d){
+ if(game.eh<=0)return;let amount=typeof d==='number'?d:(d.total||0);
+ const special=getEquippedSpecialEffect();
+ if(special&&special.id==='secondChance'&&amount>=game.hp&&Date.now()>(game.specialCooldowns.secondChance||0)&&Math.random()<(game.characterRarity==='rarV'?.35:game.characterRarity==='rarR'?.20:game.characterRarity==='rarO'?.12:.08)){game.hp=1;game.teamHp[game.role]=1;game.specialCooldowns.secondChance=Date.now()+(game.characterRarity==='rarV'?45000:game.characterRarity==='rarR'?60000:90000);toast('💫 '+special.name+': sống sót với 1 HP!');bars();onlineSetMyHp();return}
+ amount=specialIncomingDamage(amount);
+ if(special&&(special.id==='reflect'||special.id==='thorns')&&amount>0){const r=Math.random();let chance=0,pct=0;if(special.id==='reflect'){chance=game.characterRarity==='rarV'?.55:game.characterRarity==='rarR'?.45:game.characterRarity==='rarO'?.35:.25;pct=game.characterRarity==='rarV'?.50+Math.random()*.30:game.characterRarity==='rarR'?.30+Math.random()*.20:game.characterRarity==='rarO'?.20+Math.random()*.15:.10+Math.random()*.10}else{chance=game.characterRarity==='rarV'?.60:game.characterRarity==='rarR'?.50:game.characterRarity==='rarO'?.40:.30;pct=game.characterRarity==='rarV'?.80+Math.random()*.40:game.characterRarity==='rarR'?.50+Math.random()*.25:game.characterRarity==='rarO'?.35+Math.random()*.15:.20+Math.random()*.10}if(r<chance){const refl=Math.max(1,Math.round(amount*pct));game.eh=Math.max(0,game.eh-refl);toast(`${special.name}: phản lại ${refl} ST!`);combatVfx('crit','🪞 PHẢN KÍCH!');}}
+ if(game.boss&&game.superBossIndex===3)amount=Math.ceil(amount*.88);
+ if(game.boss&&game.superBossIndex===4&&Math.random()<.15&&amount>0){const reflect=Math.max(1,Math.round(amount*.20));game.hp=Math.max(0,game.hp-reflect);game.teamHp[game.role]=game.hp;toast('🪞 Lõi Phản Chấn: -'+reflect+' HP!');bars();if(game.hp<=0){markDead(game.role);return}}
+ game.eh=Math.max(0,Math.round(game.eh-amount));
+ if(d.doubleHit)$('#log').textContent='🌪️ Phong kích hoạt: đánh 2 lần!';
+ if(d.stun){game.enemyStunUntil=Date.now()+5000;game.enemyStunned=true;toast('⚡ Lôi: Choáng 5 giây!');combatVfx('lightning','⚡ CHOÁNG 5 GIÂY!');}
+ if(d.control){game.enemyControlUntil=Date.now()+5000;game.enemySlowed=true;toast('❄️ Băng: Khống chế 5 giây!');combatVfx('ice','❄️ KHỐNG CHẾ 5 GIÂY!');}
+ if(d.doubleHit){combatVfx('wind','🌪️ ĐÁNH 2 LẦN!')}
+ if(d.earthShield){game.teamShieldHits.host=Math.max(game.teamShieldHits.host||0,d.earthShield);game.teamShieldHits.guest=Math.max(game.teamShieldHits.guest||0,d.earthShield);shieldVfx();combatVfx('earth','🪨 KHIÊN NHAM '+d.earthShield+' LỚP!');}
+ if(d.teamHealPct){Object.keys(game.teamHp).forEach(r=>{if(!game.teamDead[r]){const maxHp=r===game.role?calcStats().hp:200;game.teamHp[r]=Math.min(maxHp,game.teamHp[r]+Math.round(maxHp*d.teamHealPct));if(r===game.role){const before=game.hp;game.hp=game.teamHp[r];healVfx(game.hp-before)}}});toast(`💧 Thủy: Cả đội hồi ${Math.round(d.teamHealPct*100)}% HP!`);}
+ if(d.teamBuff){game.teamBuffTurns.host=20;game.teamBuffTurns.guest=20;toast('🌿 Thảo: Buff cả đội 20 giây!');combatVfx('grass','🌿 THẢO BUFF 20 GIÂY!');}
+ if(d.statusEffects&&d.statusEffects.length)d.statusEffects.forEach(applyElementStatus);
+ if(game.eh<=0){rewardEnemyOnce();addStageMoney(game.boss?150:Math.floor(5+Math.random()*11));if(storyWaveCleared())return;onlineBattleState();return finish(true)}onlineBattleState();bars();startEnemyStatusTicker()
+}
+function addStageMoney(n){let st=calcStats();let final=Math.round(n*(1+st.moneyPct/100));game.stageMoney+=final;$('#stageMoney').textContent=game.stageMoney.toLocaleString('vi-VN');if(game.online&&game.role==='host')onlineBattleState()}
+function attack(){
+ if(game.eh<=0||game.teamDead[game.role])return;
+ if(game.enemyStunUntil> Date.now()){$('#log').textContent='⚡ Kẻ địch đang choáng, không thể tấn công!';onlineBattleState();return}else game.enemyStunned=false;
+ if(game.enemyControlUntil> Date.now()){$('#log').textContent='❄️ Kẻ địch đang bị khống chế, không thể tấn công!';onlineBattleState();return}else game.enemySlowed=false
+ if(game.teamShieldHits[game.role]>0){game.teamShieldHits[game.role]--;$('#log').textContent='🪨 Khiên Nham đã chặn đòn đánh! Còn '+game.teamShieldHits[game.role]+' lớp.';shieldVfx();combatVfx('earth','🛡️ CHẶN ĐÒN!');bars();onlineBattleState();return}
+ if(game.boss&&game.superEffects.includes('shield')&&game.bossShield){game.bossShield=false;$('#log').textContent='🛡️ Khiên Khởi Đầu đã chặn đòn Boss!';toast('🔰 Khiên đã hấp thụ đòn đánh!');return}
+ let st=calcStats();let dodgeChance=st.dodge;if(game.boss&&game.superBossIndex===9&&game.eh<=game.em*.3)dodgeChance=Math.max(0,dodgeChance-10);if(Math.random()<(dodgeChance/100)){game.log='💨 Bạn né được đòn đánh!';$('#log').textContent=game.log;toast('💨 NÉ TRÁNH!');return}
+ let hit=Math.random()<(game.boss?.5:.6);if(!hit){$('#log').textContent='👾 Địch đánh hụt!';return}
+ let d=game.boss?35+Math.floor(Math.random()*16):8+Math.floor(Math.random()*8);
+ if(game.boss){
+   const sb=SUPER_BOSS_DATA[Math.min(10,Math.max(1,game.superBossIndex))-1];
+   if(game.superBossIndex===1&&game.eh<=game.em*.5)d=Math.ceil(d*1.20);
+   if(game.superBossIndex===5&&game.superBossTrigger){d=Math.ceil(d*1.35);game.superBossTrigger=false;}
+   if(game.superBossIndex===6&&game.hp<=calcStats().hp*.5)d=Math.ceil(d*1.25);
+   if(game.superBossIndex===8){/* Hấp huyết xử lý sau khi gây sát thương */}
+   if(game.superBossIndex===9&&game.eh<=game.em*.3)d=Math.ceil(d*1.40);
+   if(game.superBossIndex===10&&game.eh<=game.em*.5)d=Math.ceil(d*1.35);
+   if((game.superBossIndex===2||game.superBossIndex===10)&&game.bossAnswers>0&&game.bossAnswers%5===0){const heal=Math.round(game.em*(game.superBossIndex===10?.03:.04));game.eh=Math.min(game.em,game.eh+heal);toast('💚 '+(game.superBossIndex===10?'Chúa Tể 7 Sắc':'Siêu Boss Tái Sinh')+': +'+heal+' HP!');bars();}
+ }
+ if(game.boss&&game.superEffects.includes('armor'))d=Math.ceil(d*.8);
+ if(st.teamDefBuff)d=Math.ceil(d*.9);
+ d=Math.max(1,Math.round(d*(100/(100+st.def))));game.hp=Math.max(0,game.hp-d);game.teamHp[game.role]=game.hp;
+ if(game.boss&&game.superBossIndex===5&&game.bossAnswers%6===0)game.superBossTrigger=true;
+ if(game.boss&&game.superBossIndex===8){const heal=Math.max(1,Math.round(d*.12));game.eh=Math.min(game.em,game.eh+heal);toast('🩸 Hấp Huyết: Boss hồi '+heal+' HP!');}
+ $('#log').textContent='💥 Bạn mất '+d+' HP!';bars();
+ if(game.boss&&game.superBossIndex===7&&game.bossAnswers%4===0&&Math.random()<.25&&game.hp>0){toast('🌪️ Bão Không Gian: Boss tấn công lần nữa!');setTimeout(()=>{if(game.hp>0&&!game.teamDead[game.role])attack()},120)}
+ if(game.hp<=0){game.teamDead[game.role]=true;markDead(game.role)}else if(game.online)onlineSetMyHp()
+}
+
+function answer(ok){
+ if(game.teamDead[game.role]||game.spectator)return;
+ const responseSec=Math.max(0,(Date.now()-questionStartedAt)/1000);
+ stopQuestionTimer();
+ if(ok){
+  game.combo++;game.bossAnswers++;let superC=game.combo>=4;let hit=calculatePlayerHit(); hit.physical=specialOutgoingDamage(hit.physical); hit.total=hit.physical+Object.values(hit.elemental).reduce((a,b)=>a+b,0)+hit.effect;
+  // Bonus tốc độ trả lời: <=3s +25%, >3 đến <5s +10%, >=5 đến <10s +5%, từ 10s trở lên không bonus.
+  let speedBonus=0,speedLabel='';
+  if(responseSec<=3){speedBonus=.25;speedLabel='⚡ SIÊU NHANH +25%';}
+  else if(responseSec<5){speedBonus=.10;speedLabel='⚡ NHANH +10%';}
+  else if(responseSec<10){speedBonus=.05;speedLabel='⚡ NHANH +5%';}
+  if(speedBonus>0){
+   hit.physical=Math.round(hit.physical*(1+speedBonus));
+   hit.elemental=Object.fromEntries(Object.entries(hit.elemental||{}).map(([k,v])=>[k,Math.round(v*(1+speedBonus))]));
+   hit.effectParts=(hit.effectParts||[]).map(x=>({...x,value:Math.round(x.value*(1+speedBonus))}));
+   hit.effect=hit.effectParts.reduce((sum,x)=>sum+x.value,0);
+   hit.total=hit.physical+Object.values(hit.elemental).reduce((a,b)=>a+b,0)+hit.effect;
+   toast(speedLabel+` • ${responseSec.toFixed(1)}s`);
+  }
+
+  if(superC){hit.physical=Math.round(hit.physical*1.5);hit.total=hit.physical+Object.values(hit.elemental).reduce((a,b)=>a+b,0);game.combo=0;toast('☄️ SUPER CRIT!')}
+  if(game.boss&&game.superEffects.includes('power')){hit.physical=Math.round(hit.physical*1.2);hit.total=hit.physical+Object.values(hit.elemental).reduce((a,b)=>a+b,0)}
+  if(game.boss&&superC&&game.superEffects.includes('focus')){hit.physical+=25;hit.total+=25}
+  if(game.boss&&game.superEffects.includes('ammo')&&game.bossAnswers%2===0){hit.physical+=20;hit.total+=20}
+  hit.total=hit.physical+Object.values(hit.elemental).reduce((a,b)=>a+b,0)+hit.effect;
+  if(hit.crit||superC){combatVfx('crit',superC?'☄️ SUPER CRIT!':'💥 BẠO KÍCH!')}
+  else {combatVfx('hit')}
+  const activeEl=Object.keys(hit.elemental||{}).find(k=>hit.elemental[k]>0);
+  if(activeEl)combatVfx(activeEl);
+  if(game.online&&game.role!=='host')onlineSend({type:'enemyHit',physical:hit.physical,elemental:hit.elemental,total:hit.total,crit:hit.crit,doubleHit:hit.doubleHit,stun:hit.stun,control:hit.control,earthShield:hit.earthShield,teamHealPct:hit.teamHealPct,teamBuff:hit.teamBuff,effect:hit.effect,effectParts:hit.effectParts,statusEffects:hit.statusEffects,fromRole:game.role});
+  else {applyEnemyDamage(hit);showDamageFx(damageParts(hit));}
+  if(game.boss&&game.superEffects.includes('regen')&&game.bossAnswers%3===0){game.hp=Math.min(calcStats().hp,game.hp+20);game.teamHp[game.role]=game.hp;bars();healVfx(20);if(game.online)onlineSetMyHp()}
+  if(game.eh<=0)return
+ }else{game.combo=0;toast('❌ BẮN TRƯỢT!');$('#log').textContent='Sai đáp án. Online có 5% bắn nhầm đồng đội.'}
+ bars();setTimeout(()=>{attack();if(game.hp>0&&game.eh>0&&!game.teamDead[game.role])question()},550)
+}
+
+function backpackAdd(x){if(game.backpack.length>=30){toast('🎒 Balo đầy 30/30!');return false}game.backpack.push(x);updateBackpackUI();return true}
+function updateBackpackUI(){const a=$('#backpackCount');const b=$('#backpackCount2');if(a)a.textContent=game.backpack.length;if(b)b.textContent=game.backpack.length}
+function renderBackpack(){const g=$('#backpackGrid');if(!g)return;$('#backpackCount2').textContent=game.backpack.length;if(!game.backpack.length){g.innerHTML='<p class="muted">Balo đang trống.</p>';return}g.innerHTML=game.backpack.map((x,i)=>`<div class="bpitem"><b class="${x.cls||''}">${x.icon||x.ri||'📦'} ${x.name}</b><br><small>${x.heal?('❤️ Hồi '+Math.round(x.heal*100)+'% HP'):itemText(x)}</small>${x.heal?`<button onclick="usePotion(${i})">❤️ Sử dụng</button>`:''}</div>`).join('')}
+function potionDrop(){let r=Math.random()*100;if(r<1)return{name:'Large Potion',icon:'🧃',ri:'🧃',rar:'Hồi máu',cls:'rarG',heal:.50,slot:'other',stat:{}};if(r<6)return{name:'Medium Potion',icon:'🧴',ri:'🧴',rar:'Hồi máu',cls:'rarG',heal:.20,slot:'other',stat:{}};if(r<18)return{name:'Small Potion',icon:'🧪',ri:'🧪',rar:'Hồi máu',cls:'rarG',heal:.10,slot:'other',stat:{}};return null}
+function usePotion(i){const x=game.backpack[i];if(!x||!x.heal)return;const max=calcStats().hp;const before=game.hp;game.hp=Math.min(max,game.hp+Math.round(max*x.heal));game.backpack.splice(i,1);bars();renderBackpack();if(game.online)onlineSetMyHp();toast('❤️ '+x.name+': +'+(game.hp-before)+' HP')}
+window.usePotion=usePotion;
+function openBackpack(){renderBackpack();$('#backpackModal').classList.add('show')}
+function closeBackpack(){$('#backpackModal').classList.remove('show')}
+window.usePotion=usePotion;
+function loot(){let st=calcStats();let chestChance=11.987*(1+st.dropPct/100);let n=Math.random()*100;if(n<chestChance)return{chest:true};if(game.boss&&!game.storyBattle)return{gear:specialGear()};return{gear:gear(false)}}
+function equipmentChest(){return{name:'Rương trang bị',slot:'other',icon:'🎁',ri:'🎁',rar:'Rương',cls:'rarY',stars:1,special:false,chest:true,stat:{hp:0,dmg:0,crit:0,critDmg:0}}}
+function beginnerRarity(){
+  const pool=[['⚪','Trắng',39.980997,'rarW'],['🟢','Xanh',30,'rarG'],['🔵','Lam',20,'rarB'],['🟣','Tím',9.98,'rarP'],['🟡','Vàng',.03,'rarY'],['🟠','Cam',.005,'rarO'],['🔴','Đỏ',.001,'rarR'],['🌈','Cầu Vồng',.000003,'rarV']];
+  let n=Math.random()*100,sum=0;for(const r of pool){sum+=r[2];if(n<sum)return r}return pool[0];
+}
+function beginnerChest(){return{name:'Rương Tân Thủ',slot:'other',icon:'🎁',ri:'🎁',rar:'Rương Tân Thủ',cls:'rarG',stars:1,special:false,chest:true,beginnerChest:true,stat:{hp:0,dmg:0,crit:0,critDmg:0}}}
+function openBeginnerChest(){
+  const item=gear(false,null,null);
+  const r=beginnerRarity();
+  const old=rarity;
+  // Generate the same equipment system, but force the beginner chest's improved rarity.
+  const fake=gear;
+  let got;
+  const originalRarity=window.__gun2RarityOverride;
+  window.__gun2RarityOverride=r;
+  got=gearWithRarity(r);
+  window.__gun2RarityOverride=originalRarity;
+  return got;
+}
+function gearWithRarity(r){
+  let d=gearDefs[Math.floor(Math.random()*gearDefs.length)];
+  let m=rarityMult[r[3]]||1;
+  let stat={hp:0,dmg:0,def:0,crit:0,critDmg:0,dodge:0,hpPct:0,atkPct:0,defPct:0,dropPct:0,moneyPct:0,element:null,elementDmg:0,elements:{}};
+  const baseBySlot={helmet:{hp:40,dmg:5,def:6},shirt:{hp:70,dmg:8,def:10},weapon:{hp:25,dmg:24,def:4},pants:{hp:25,dmg:5,def:4},shoes:{hp:30,dmg:6,def:5}};
+  const base=baseBySlot[d[1]]||{hp:30,dmg:5,def:4};stat.hp=Math.round(base.hp*m);stat.dmg=Math.round(base.dmg*m);stat.def=Math.round(base.def*m);
+  if(d[1]==='helmet')stat.dodge=Number((1*m).toFixed(1)); if(d[1]==='weapon')stat.critDmg=Number((5*m).toFixed(1)); if(d[1]==='pants')stat.dodge=Number((1.5*m).toFixed(1)); if(d[1]==='shoes'){stat.crit=Number((2*m).toFixed(1));stat.dodge=Number((2*m).toFixed(1));}
+  const extraPool=[['crit','🎯 Tỷ lệ bạo',1.5,4],['critDmg','💥 ST bạo',5,15],['defPct','🛡️ %DEF',3,8],['hpPct','❤️ %HP',3,8],['atkPct','🔫 %ATK',3,8],['dropPct','🎁 % rơi đồ',2,6],['moneyPct','💰 % rơi tiền',2,8]];
+  const count=Math.random()<.5?1:2,pool=extraPool.slice();for(let i=0;i<count;i++){const j=Math.floor(Math.random()*pool.length),a=pool.splice(j,1)[0];stat[a[0]]=Number((a[2]+Math.random()*(a[3]-a[2])).toFixed(1));}
+  if(['rarP','rarY','rarO','rarR','rarV'].includes(r[3])){
+    const els=[['fire','🔥','Lửa'],['ice','❄️','Băng'],['lightning','⚡','Lôi'],['water','💧','Thủy'],['wind','🌪️','Phong'],['grass','🌿','Thảo'],['earth','🪨','Nham']];
+    const elemBase={rarP:30,rarY:50,rarO:75,rarR:110,rarV:160}[r[3]]||30;const primary=els[Math.floor(Math.random()*els.length)];
+    const elementCount=r[3]==='rarY'?(Math.random()<0.05?2:1):r[3]==='rarO'?(Math.random()<0.07?2:1):r[3]==='rarR'?(Math.random()<0.0001?3:(Math.random()<0.10?2:1)):r[3]==='rarV'?(Math.random()<0.01?3:(Math.random()<0.20?2:1)):1;
+    const chosen=[primary];while(chosen.length<elementCount){const e=els[Math.floor(Math.random()*els.length)];if(!chosen.some(x=>x[0]===e[0]))chosen.push(e);}chosen.forEach((el,i)=>{const dmg=Math.round(elemBase*(0.85+Math.random()*0.30));stat.elements[el[0]]=dmg;if(i===0){stat.element=el[0];stat.elementIcon=el[1];stat.elementName=el[2];stat.elementDmg=dmg;}});
+  }
+  return{name:d[0],slot:d[1],icon:d[2],ri:r[0],rar:r[1],cls:r[3],stars:1,special:['rarP','rarY','rarO','rarR','rarV'].includes(r[3]),stat};
+}
+function openChest(idx){let x=game.bag[idx];if(!x||!x.chest)return;const item=x.beginnerChest?gearWithRarity(beginnerRarity()):gear(true);game.bag.splice(idx,1);game.bag.push(item);wallet();renderInv();stats();equipCards();toast((x.beginnerChest?'🎁 Mở Rương Tân Thủ: ':'🎁 Mở rương: ')+'nhận '+item.ri+' '+item.name+(item.special?' ✨ Đặc biệt':''));}
+window.openChest=openChest;
+function collectLoot(allowCharacterCard=false){let d=loot();let item=d.chest?equipmentChest():d.gear;let potionItem=(!game.boss&&!d.chest)?potionDrop():null;let got=[];if(backpackAdd(item))got.push(item);if(potionItem&&backpackAdd(potionItem))got.push(potionItem);if(allowCharacterCard&&Math.random()<0.02){const card=characterCard();if(backpackAdd(card))got.push(card)}return{items:got,full:got.length===0}}
+function finish(win){stopQuestionTimer();if(game.finished)return;game.finished=true;if(win&&game.boss&&!game.storyBattle){game.superBossIndex=Math.min(10,game.superBossIndex+1);saveProfile()}let r=collectLoot(win&&game.boss&&!game.storyBattle);game.loot=r.items;let names=r.items.map(x=>`${x.icon||x.ri} ${x.name}`).join(' • ');if(Math.random()<.15)game.dia++;const earned=game.stageMoney;game._lastEarned=earned;if(earned>0)game.money+=earned;game.stageMoney=0;onlineBattleState();$('#ri').textContent=win?'🏆':'💀';$('#rt').textContent=win?(game.storyBattle?`🏆 Màn ${game.stage} hoàn thành!`:'Màn hoàn thành!'):'Bạn đã bị hạ!';$('#rx').textContent=win?`💰 Nhận ${earned.toLocaleString('vi-VN')} tiền từ màn này. Đồ đã vào balo (${game.backpack.length}/30), sau khi kết thúc sẽ tự chuyển về kho đồ.`:`💰 Màn này kiếm được ${earned.toLocaleString('vi-VN')} tiền nhưng trận đã kết thúc. Đồ đã nhặt được vẫn nằm trong balo (${game.backpack.length}/30).`;$('#loot').innerHTML=r.items.length?r.items.map(x=>x.characterCard?`<div class="inv">🎴 <b class="rarG">Thẻ đổi nhân vật</b><br><small>🎲 Dùng để random phẩm chất nhân vật</small></div>`:x.heal?`<div class="inv">${x.icon} <b>${x.name}</b><br><small>❤️ Hồi ${Math.round(x.heal*100)}% HP</small></div>`:x.slot?`<div class="inv">${x.ri} <b class="${x.cls}">${x.name}</b><br><small>${x.rar} • ⭐1${x.special?' • ✨ Đặc biệt':''}</small></div>`:'<div class="inv">🎁 Rương trang bị</div>').join(''):'<div class="inv">🎒 Không nhặt được đồ vì balo đã đầy.</div>';wallet();renderBackpack();show('result')}
+function renderCampaign(){
+  const g=$('#campaignGrid'); g.innerHTML='';
+  for(let i=1;i<=200;i++){
+    const b=document.createElement('button'); b.className='stage '+(game.done.includes(i)?'done':'');
+    const locked=i>1&&!game.done.includes(i-1);
+    if(locked)b.classList.add('locked');
+    b.disabled=locked;
+    b.innerHTML=`<b>${locked?'🔒':'🎮'} Màn ${i}</b><small>${game.done.includes(i)?'✅ Đã phá đảo':'4 ải • Ải 4 là Boss'}</small>`;
+    b.onclick=()=>startStoryStage(i);
+    g.appendChild(b);
+  }
+  $('#doneCount').textContent=game.done.length;
+}
+function setupStoryWave(wave){
+  if(!game.spectator){$('#answers').style.pointerEvents='auto';$('#answers').style.opacity='1';}
+
+  game.stageWave=wave;
+  game.boss=(wave===4);
+  game._enemyRewarded=false;
+  if(game.boss)setBossProfile(game.stage);else setBossProfile(Math.min(200,Math.max(1,game.stage*2+wave-2)));
+  game.em=game.boss?Math.round(1000*(1+Math.max(0,game.stage-1)*0.15)):Math.round(100*(1+Math.max(0,game.stage-1)*0.08));
+  game.eh=game.em;
+  game.enemyStunned=false;game.enemySlowed=false;game.enemyStunUntil=0;game.enemyControlUntil=0;game.enemyStatusEffects=[];
+  game.finished=false;startTeamBuffTicker();;hideDeathOverlay();
+  $('#enemy').textContent=game.boss?'👹':'👾';
+  updateEnemyLabel();
+  bars();question();show('battle');
+  if(game.online&&game.role==='host')onlineBattleState();
+}
+function startStoryStage(n){
+  game.stage=n;game.storyBattle=true;game.stageWave=1;game.boss=false;game.hp=calcStats().hp;game.combo=0;game.stageMoney=0;
+  game.spectator=false;game.teamHp={host:200,guest:200};game.teamDead={host:false,guest:false};game.teamSpectator={host:false,guest:false};game.reviveTimers={host:0,guest:0};game.teamShieldHits={host:0,guest:0};game.teamBuffTurns={host:0,guest:0};game.enemyStunUntil=0;game.enemyControlUntil=0;
+  setupStoryWave(1);
+}
+function storyWaveCleared(){
+  if(!game.storyBattle)return false;
+  if(game.stageWave<4){
+    const next=game.stageWave+1;
+    toast(`✅ Ải ${game.stageWave} hoàn thành! Chuẩn bị Ải ${next}...`);
+    setTimeout(()=>{
+      if(game.finished)return;
+      setupStoryWave(next);
+    },900);
+    return true;
+  }
+  return false;
+}
+
+function openCampaign(){renderCampaign();show('campaign')}
+function buyBeginnerChest(){
+  if(game.beginnerChestBought>=10){toast('🎁 Đã đạt giới hạn 10 Rương Tân Thủ, không thể mua thêm.');return}
+  if(game.money<10){toast('💰 Không đủ tiền! Gói Rương Tân Thủ có giá 10 tiền.');return}
+  if(game.bag.length+10>200){toast('📦 Kho đồ không đủ chỗ cho 10 Rương Tân Thủ!');return}
+  game.money-=10;
+  for(let i=0;i<10;i++) game.bag.push(beginnerChest());
+  game.beginnerChestBought=10;
+  saveProfile();wallet();renderInv();stats();equipCards();closeGearDetail();renderShop();toast('🎁 Đã mua gói 10 Rương Tân Thủ với giá 10 💰!');
+}
+window.buyBeginnerChest=buyBeginnerChest;
+function openBeginnerChestShopDetail(){
+  if(game.beginnerChestBought)return;
+  $('#gdTitle').textContent='🎁 Rương Tân Thủ';
+  $('#gdRarity').innerHTML='<span class="rarG">Rương đặc biệt</span> • Gói 10 rương, mua 1 lần duy nhất';
+  $('#gdBody').innerHTML='<div class="gearbigicon">🎁</div><div class="fusionhint" style="text-align:center">Rương có tỷ lệ phẩm chất cao hơn Rương Trang Bị thường một chút.</div><div style="font-size:18px;font-weight:900;text-align:center;margin:10px 0">💰 Giá mua: <b>10 💰 / 10 rương</b></div>';
+  $('#gdActions').innerHTML='<button class="mode" onclick="buyBeginnerChest()">🛒 Có, mua 10 rương • 10 💰</button><button class="back" onclick="closeGearDetail()">✕ Không mua</button>';
+  $('#gearDetailModal').style.zIndex='30';$('#gearDetailModal').classList.add('show');
+}
+window.openBeginnerChestShopDetail=openBeginnerChestShopDetail;
+function buyShop(i){
+  const x=shop[i];
+  if(!x){return}
+  if(game.money<x.price){toast('💰 Không đủ tiền để mua món này!');return}
+  if(game.bag.length>=200){toast('📦 Kho đồ đã đầy!');return}
+  game.money-=x.price;
+  const bought={...x,shop:false,shopPurchased:true,purchasePrice:x.price};
+  delete bought.price;
+  game.bag.push(bought);
+  shop.splice(i,1);
+  closeGearDetail();
+  wallet();renderInv();stats();equipCards();
+  renderShop();
+  toast('🛒 Đã mua '+x.icon+' '+x.name+'!');
+}
+function openShopItemDetail(i){
+  const x=shop[i];
+  if(!x)return;
+  $('#gdTitle').textContent=`${x.icon||'⚙️'} ${x.name}`;
+  $('#gdRarity').innerHTML=`<span class="${x.cls}">${x.rar}</span> • ⭐ ${x.stars||1}/5${x.stat&&x.stat.element?` • ${x.stat.elementIcon} ${x.stat.elementName}`:''}`;
+  $('#gdBody').innerHTML=`
+    <div class="gearbigicon">${x.icon||'⚙️'}</div>
+    <div style="font-size:18px;font-weight:900;text-align:center;margin:10px 0">💰 Giá bán: <b>${x.price.toLocaleString('vi-VN')} 💰</b></div>
+    <div class="fusionhint" style="text-align:center">Bạn có muốn mua trang bị này không?</div>`;
+  $('#gdActions').innerHTML=`
+    <button class="mode" onclick="buyShop(${i})">🛒 Có, mua ${x.price.toLocaleString('vi-VN')} 💰</button>
+    <button class="back" onclick="closeGearDetail()">✕ Không mua</button>`;
+  $('#gearDetailModal').style.zIndex='30';$('#gearDetailModal').classList.add('show');
+}
+window.buyShop=buyShop;
+window.openShopItemDetail=openShopItemDetail;
+function renderShop(){
+  const g=$('#shopGrid');
+  const beginner=!game.beginnerChestBought?`<button class="shopitem" onclick="openBeginnerChestShopDetail()" style="text-align:left;cursor:pointer;border:1px solid #facc15;box-shadow:0 0 0 1px rgba(250,204,21,.12)"><div style="font-size:30px">🎁</div><b class="rarG">Rương Tân Thủ</b><div class="muted">⭐ Gói 10 rương • 10 💰 • Mua 1 lần duy nhất</div><div class="muted" style="margin-top:6px">Tỷ lệ phẩm chất cao hơn Rương Trang Bị</div></button>`:'';
+  g.innerHTML=beginner+shop.map((x,i)=>{
+    const st=x.stat||{};
+    const extra=(st.elementDmg?` • ${st.elementIcon} +${st.elementDmg} ST ${st.elementName}`:'');
+    return `<button class="shopitem" onclick="openShopItemDetail(${i})" style="text-align:left;cursor:pointer">
+      <div style="font-size:26px">${x.icon}</div>
+      <b class="${x.cls}">${x.name}</b>
+      <div class="muted">⭐ ${x.stars||1} • ${x.rar}${extra}</div>
+      <div class="muted" style="margin-top:6px">${itemText(x)}</div>
+    </button>`;
+  }).join('');
+}
+function renderBossEffects(){
+  $('#effectGrid').innerHTML=bossEffects.map(x=>`<button class="effectcard ${game.superEffects.includes(x.id)?'selected':''}" onclick="toggleBossEffect('${x.id}')"><span class="effectcheck">${game.superEffects.includes(x.id)?'✓':''}</span><b>${x.icon} ${x.name}</b><small>${x.desc}</small></button>`).join('');
+  $('#effectCount').textContent=game.superEffects.length;
+  $('#effectConfirm').disabled=game.superEffects.length!==2;
+}
+function toggleBossEffect(id){
+  if(game.superEffects.includes(id)) game.superEffects=game.superEffects.filter(x=>x!==id);
+  else if(game.superEffects.length<2) game.superEffects.push(id);
+  else toast('✨ Chỉ được chọn đúng 2 hiệu ứng!');
+  renderBossEffects();
+}
+window.toggleBossEffect=toggleBossEffect;
+function openBossSetup(){game.superEffects=[];game.bossShield=true;game.bossAnswers=0;renderBossEffects();show('bossSetup')}
+function start(boss){game.storyBattle=false;game.stageWave=1;game.boss=boss;game._enemyRewarded=false;if(boss)setSuperBossProfile(game.superBossIndex);else setBossProfile(Math.min(200,Math.max(1,game.stage*2)));game.hp=calcStats().hp;game.em=boss?(game.superBossMaxHp||10000):100;game.eh=game.em;game.combo=0;game.stageMoney=0;game.teamHp={host:200,guest:200};game.teamDead={host:false,guest:false};game.reviveTimers={host:0,guest:0};game.teamShieldHits={host:0,guest:0};game.teamBuffTurns={host:0,guest:0};game.enemyStunUntil=0;game.enemyControlUntil=0;game.enemyStunned=false;game.enemySlowed=false;game.enemyStatusEffects=[];game.finished=false;hideDeathOverlay();game.enemyStatusEffects=[];startEnemyStatusTicker();game.bossShield=true;game.bossAnswers=0;game.superBossTrigger=false;game.specialCooldowns={};startTeamBuffTicker();$('#enemy').textContent=boss?'👹':'👾';updateEnemyLabel();bars();question();show('battle')}
+const elementSetBonuses={
+ fire:{name:'Lửa',icon:'🔥',cls:'element-fire',bonus:'+10% ST Lửa • +5% ST bạo',proc:'100% mỗi lần đánh trúng: Thiêu đốt 3 giây • ST hiệu ứng = 10% ST Lửa mỗi giây.'},
+ water:{name:'Thủy',icon:'💧',cls:'element-water',bonus:'+10% ST Thủy • Hồi 5–10% HP cho bản thân và đồng đội khi trả lời đúng',proc:'100% mỗi lần đánh trúng: Ẩm ướt 3 giây • ST hiệu ứng = 10% ST Thủy mỗi giây. Thêm: trả lời đúng hồi 5–10% HP tối đa cho bản thân và đồng đội.'},
+ wind:{name:'Phong',icon:'🌪️',cls:'element-wind',bonus:'+10% ST Phong • +2.5% Né tránh • 40% cơ hội đánh 2 lần',proc:'100% mỗi lần đánh trúng: Gào xé 3 giây • ST hiệu ứng = 10% ST Phong mỗi giây.'},
+ earth:{name:'Nham',icon:'🪨',cls:'element-earth',bonus:'+10% ST Nham • Tạo khiên cho bản thân và đồng đội, chắn 4–5 đòn',proc:'100% mỗi lần đánh trúng: Chấn áp 3 giây • ST hiệu ứng = 10% ST Nham mỗi giây. Thêm: đúng 3 đáp án liên tiếp tạo khiên 4–5 lần chắn đòn.'},
+ lightning:{name:'Lôi',icon:'⚡',cls:'element-lightning',bonus:'+10% ST Lôi • +5% Tỷ lệ bạo • Choáng 5 giây',proc:'100% mỗi lần đánh trúng: Nhiễm điện 3 giây • ST hiệu ứng = 10% ST Lôi mỗi giây. Thêm: đúng 2 đáp án liên tiếp choáng Boss/quái 5 giây.'},
+ grass:{name:'Thảo',icon:'🌿',cls:'element-grass',bonus:'+10% ST • +10% DEF • +5% Tỷ lệ bạo • +10% ST bạo',proc:'100% mỗi lần đánh trúng: Quấn chân 3 giây • ST hiệu ứng = 10% ST Thảo mỗi giây. Thêm: đúng 3 đáp án liên tiếp buff bản thân và đồng đội 20 giây.'},
+ ice:{name:'Băng',icon:'❄️',cls:'element-ice',bonus:'+10% ST Băng • Khống chế 5 giây',proc:'100% mỗi lần đánh trúng: Đông cứng 3 giây • ST hiệu ứng = 10% ST Băng mỗi giây. Thêm: đúng 2 đáp án liên tiếp khống chế Boss/quái 5 giây.'}
+};
+function calcStats(){
+ const cr=getCharacterRarity();
+ let st={hp:cr.hp,dmg:cr.dmg,def:cr.def,crit:cr.crit,critDmg:cr.critDmg,dodge:0,hpPct:0,atkPct:0,defPct:0,dropPct:0,moneyPct:0,elements:{},elementSet:{},doubleHit:0};
+ Object.values(game.equipped).forEach(x=>{
+  if(!x||!x.stat)return;
+  st.hp+=x.stat.hp||0;st.dmg+=x.stat.dmg||0;st.def+=x.stat.def||0;st.crit+=x.stat.crit||0;st.critDmg+=x.stat.critDmg||0;st.dodge+=x.stat.dodge||0;
+  st.hpPct+=x.stat.hpPct||0;st.atkPct+=x.stat.atkPct||0;st.defPct+=x.stat.defPct||0;st.dropPct+=x.stat.dropPct||0;st.moneyPct+=x.stat.moneyPct||0;
+  const xe=x.stat.elements&&Object.keys(x.stat.elements).length?x.stat.elements:(x.stat.element&&x.stat.elementDmg?{[x.stat.element]:x.stat.elementDmg}:{});
+  Object.entries(xe).forEach(([el,dmg])=>{st.elements[el]=(st.elements[el]||0)+dmg});
+ });
+ if((game.teamBuffTurns&&game.teamBuffTurns[game.role]||0)>0){st.atkPct+=10;st.defPct+=10;st.crit+=5;st.critDmg+=10}st.hp=Math.round(st.hp*(1+st.hpPct/100));st.dmg=Math.round(st.dmg*(1+st.atkPct/100));st.def=Math.round(st.def*(1+st.defPct/100));
+ Object.keys(elementSetBonuses).forEach(el=>{
+  const count=Object.values(game.equipped).filter(x=>{const a=x&&x.stat;return a&&((a.elements&&a.elements[el])||(a.element===el))}).length;
+  if(count>=5){
+   st.elementSet[el]=true;if(st.elements[el])st.elements[el]=Math.round(st.elements[el]*1.10);else st.elements[el]=0;
+   if(el==='fire')st.critDmg+=5;
+   if(el==='wind'){st.dodge+=2.5;st.doubleHit=.40}
+   if(el==='earth'){st.def+=10}
+   if(el==='lightning'){st.crit+=5}
+
+
+  }
+ });
+ return st;
+}
+function stats(){
+ let st=calcStats();
+ const cr=getCharacterRarity(); if($('#characterRarity')){$('#characterRarity').className=cr.cls;$('#characterRarity').textContent=`${cr.ri} ${cr.name} • HP ${cr.hp} • ATK ${cr.dmg} • DEF ${cr.def} • Bạo ${cr.crit}% • ST bạo ${cr.critDmg}%`;}
+ $('#stHP').textContent=st.hp;$('#stDef').textContent=st.def;$('#stDMG').textContent=st.dmg;if($('#stDrop'))$('#stDrop').textContent=Number(st.dropPct.toFixed(1))+'%';if($('#stMoneyDrop'))$('#stMoneyDrop').textContent=Number(st.moneyPct.toFixed(1))+'%';$('#stCrit').textContent=Number(st.crit.toFixed(1))+'%';$('#stCritDmg').textContent=st.critDmg+'%';$('#stDodge').textContent=Number(st.dodge.toFixed(1))+'%';
+ let names={fire:['🔥','Lửa','element-fire'],ice:['❄️','Băng','element-ice'],lightning:['⚡','Lôi','element-lightning'],water:['💧','Thủy','element-water'],wind:['🌪️','Phong','element-wind'],grass:['🌿','Thảo','element-grass'],earth:['🪨','Nham','element-earth']};
+ let es=Object.entries(st.elements);let html=es.length?es.map(([k,v])=>{let n=names[k];return `<span class="elementTag ${n[2]}">${n[0]} ${n[1]}: <b>${v}</b>${st.elementSet[k]?' <strong>⚡ 5/5</strong>':''}</span>`}).join(''):'<span class="muted">Chưa có hiệu ứng trang bị nên chưa có ST nguyên tố.</span>';
+ let sets=Object.keys(elementSetBonuses).map(el=>{let count=Object.values(game.equipped).filter(x=>x&&x.stat&&x.stat.element===el).length;if(!count)return '';let b=elementSetBonuses[el];return `<div class="setBonus ${b.cls}"><b>${b.icon} Bộ ${b.name}: ${count}/5</b><small>${count>=5?'✅ Đã kích hoạt: '+b.bonus:'🔒 Cần đủ 5 món cùng hệ để kích hoạt: '+b.bonus}</small><small>🎲 Tỷ lệ hiệu ứng: <b>${b.proc}</b></small><small>${b.desc||''}</small></div>`}).join('');
+ $('#stElements').innerHTML=html+(sets?`<div class="setBonusWrap">${sets}</div>`:'');
+}
+function equipCards(){let e=$('#equipGrid');e.innerHTML=Object.entries(slotInfo).map(([slot,info])=>{let x=game.equipped[slot];return `<button class="equip" onclick="${x?`openEquippedDetail('${slot}')`:`openVault('${slot}')`}"><div class="sloticon">${x?x.icon:info[0]}</div><b>${info[1]}</b><small>${x?x.name:'Chưa trang bị'}</small>${x?`<div class="equipped ${x.cls}">⭐${x.stars} ${x.rar}</div>`:''}</button>`}).join('')}
+function itemText(x){
+ if(x.chest)return 'Mở rương để nhận trang bị';let st=x.stat||{};let bits=[];
+ if(st.hp)bits.push('+ '+st.hp+' HP');if(st.dmg)bits.push('+ '+st.dmg+' ATK');if(st.def)bits.push('+ '+st.def+' DEF');
+ if(st.crit)bits.push('+ '+st.crit+'% Tỷ lệ bạo');if(st.critDmg)bits.push('+ '+st.critDmg+'% ST bạo');if(st.dodge)bits.push('+ '+st.dodge+'% Né tránh');
+ if(st.hpPct)bits.push('+ '+st.hpPct+'% HP');if(st.atkPct)bits.push('+ '+st.atkPct+'% ATK');if(st.defPct)bits.push('+ '+st.defPct+'% DEF');if(st.dropPct)bits.push('+ '+st.dropPct+'% Rơi đồ');if(st.moneyPct)bits.push('+ '+st.moneyPct+'% Rơi tiền');
+ const itemEls=st.elements&&Object.keys(st.elements).length?st.elements:(st.element&&st.elementDmg?{[st.element]:st.elementDmg}:{});
+ if(Object.keys(itemEls).length){const names={fire:['🔥','Lửa'],ice:['❄️','Băng'],lightning:['⚡','Lôi'],water:['💧','Thủy'],wind:['🌪️','Phong'],grass:['🌿','Thảo'],earth:['🪨','Nham']};Object.entries(itemEls).forEach(([k,v])=>{const n=names[k]||['✨','Nguyên tố'];bits.push(n[0]+' +'+v+' ST '+n[1])});}
+ return bits.join(' • ')||'Không có chỉ số';
+}
+function fusionKey(x){const st=x&&x.stat||{};const els=st.elements&&Object.keys(st.elements).length?st.elements:(st.element?{[st.element]:st.elementDmg||0}:{});return [x.name,x.slot,x.rar,x.stars||1,JSON.stringify(Object.keys(els).sort().map(k=>[k,els[k]])),x.specialEffect?.id||''].join('|')}
+function matchingFusionItems(target){if(!target)return [];const key=fusionKey(target);return game.bag.map((x,i)=>({x,i})).filter(o=>!o.x.chest&&o.x.slot===target.slot&&fusionKey(o.x)===key)}
+
+function sellPrice(x){
+  if(!x || x.chest || x.heal) return 0;
+  const st=x.stat||{};
+  const base={rarW:12,rarG:22,rarB:40,rarP:90,rarY:260,rarO:700,rarR:2500}[x.cls]||15;
+  const value=(st.hp||0)*.05+(st.dmg||0)*.45+(st.def||0)*.25+(st.crit||0)*3+
+    (st.critDmg||0)*.55+(st.dodge||0)*2.5+(st.hpPct||0)*2.5+
+    (st.atkPct||0)*3+(st.defPct||0)*2.2+(st.dropPct||0)*1.8+
+    (st.moneyPct||0)*1.5+(st.elementDmg||0)*.45;
+  return Math.max(1,Math.round((base+value)/5)*5);
+}
+function openBagItemDetail(idx){
+  const x=game.bag[idx];
+  if(!x)return;
+  if(x.chest){openChest(idx);return}
+  if(x.heal){
+    toast('🧪 Bình máu hãy dùng trong Balo khi đang chiến đấu.');
+    return;
+  }
+  if(x.characterCard){$('#gdTitle').textContent='🎴 Thẻ đổi nhân vật';$('#gdRarity').innerHTML='<span class="rarG">Thẻ đổi nhân vật</span> • Dùng 1 lần';$('#gdBody').innerHTML='<div class="gearbigicon">🎴</div><div class="fusionhint" style="text-align:center">Dùng thẻ để random lại phẩm chất nhân vật theo tỷ lệ phẩm chất của trang bị, bao gồm cả 🌈 7 Sắc.</div>';$('#gdActions').innerHTML='<button class="mode" onclick="changeCharacter()">🎴 Dùng Thẻ đổi nhân vật</button><button class="back" onclick="closeGearDetail()">✕ Đóng</button>';$('#gearDetailModal').classList.add('show');return}
+  const sell=x.shopPurchased && x.purchasePrice ? Math.floor(x.purchasePrice*0.70) : sellPrice(x);
+  const canEquip=!!x.slot && x.slot!=='other';
+  const hasOld=canEquip && !!game.equipped[x.slot];
+  $('#gdTitle').textContent=`${x.icon||x.ri||'⚙️'} ${x.name}`;
+  $('#gdRarity').innerHTML=`<span class="${x.cls}">${x.rar}</span> • ⭐ ${x.stars||1}/5${x.stat&&x.stat.element?` • ${x.stat.elementIcon} ${x.stat.elementName}`:''}`;
+  $('#gdBody').innerHTML=`
+    <div class="gearbigicon">${x.icon||x.ri||'⚙️'}</div>
+    <div class="gearstatlist">${gearDetailText(x)}</div>${specialEffectHtml(x)}
+    <div class="fusionhint">📦 Vị trí: Rương ${slotInfo[x.slot]?.[1]||'Đồ khác'}${hasOld?' • Trang bị cũ sẽ được đưa về kho khi mặc món này.':''}</div>
+    <div class="fusionhint">💰 Giá bán: <b>${sell.toLocaleString('vi-VN')} 💰</b>${x.shopPurchased?` <span class="muted">(70% giá đã mua)</span>`:` <span class="muted">(100% giá trị bán)</span>`}</div>`;
+  $('#gdActions').innerHTML=`
+    ${canEquip?`<button class="mode" onclick="equipItem(${idx});closeGearDetail()">⚙️ Trang bị</button>`:''}
+    <button class="danger" onclick="sellItem(${idx})">💰 Bán đồ • ${sell.toLocaleString('vi-VN')}</button>
+    <button class="back" onclick="closeGearDetail()">✕ Đóng</button>`;
+  $('#gearDetailModal').style.zIndex='30';$('#gearDetailModal').classList.add('show');
+}
+function sellItem(idx){
+  const x=game.bag[idx];
+  if(!x || x.chest || x.heal || x.characterCard)return;
+  const baseValue=sellPrice(x);
+  const value=x.shopPurchased && x.purchasePrice ? Math.floor(x.purchasePrice*0.70) : baseValue;
+  game.bag.splice(idx,1);
+  game.money+=value;
+  closeGearDetail();
+  wallet();renderInv();stats();equipCards();
+  toast(`💰 Đã bán ${x.name}: +${value.toLocaleString('vi-VN')} tiền`);
+}
+window.openBagItemDetail=openBagItemDetail;
+window.sellItem=sellItem;
+function gearDetailText(x){if(!x)return '';const st=x.stat||{};const rows=[];if(st.hp)rows.push(['❤️ HP','+'+st.hp]);if(st.dmg)rows.push(['🔫 ATK','+'+st.dmg]);if(st.def)rows.push(['🛡️ DEF','+'+st.def]);if(st.crit)rows.push(['🎯 Tỷ lệ bạo','+'+st.crit+'%']);if(st.critDmg)rows.push(['💥 ST bạo','+'+st.critDmg+'%']);if(st.dodge)rows.push(['💨 Né tránh','+'+st.dodge+'%']);if(st.hpPct)rows.push(['❤️ %HP','+'+st.hpPct+'%']);if(st.atkPct)rows.push(['🔫 %ATK','+'+st.atkPct+'%']);if(st.defPct)rows.push(['🛡️ %DEF','+'+st.defPct+'%']);if(st.dropPct)rows.push(['🎁 Rơi đồ','+'+st.dropPct+'%']);if(st.moneyPct)rows.push(['💰 Rơi tiền','+'+st.moneyPct+'%']);const names={fire:['🔥','Lửa'],ice:['❄️','Băng'],lightning:['⚡','Lôi'],water:['💧','Thủy'],wind:['🌪️','Phong'],grass:['🌿','Thảo'],earth:['🪨','Nham']};const itemEls=st.elements&&Object.keys(st.elements).length?st.elements:(st.element&&st.elementDmg?{[st.element]:st.elementDmg}:{});Object.entries(itemEls).forEach(([k,v])=>{const n=names[k]||['✨','Nguyên tố'];rows.push([n[0]+' ST '+n[1],'+'+v])});return rows.map(r=>`<div class="gearstatrow"><span>${r[0]}</span><br><b>${r[1]}</b></div>`).join('')||'<div class="muted">Không có chỉ số.</div>'}
+function openEquippedDetail(slot){const x=game.equipped[slot];if(!x)return openVault(slot);const info=slotInfo[slot], matches=matchingFusionItems(x), canFuse=(x.stars||1)<5&&matches.length>=3;$('#gdTitle').textContent=`${x.icon||'⚙️'} ${x.name}`;$('#gdRarity').innerHTML=`<span class="${x.cls}">${x.rar}</span> • ⭐ ${x.stars||1}/5${x.stat&&x.stat.element?` • ${x.stat.elementIcon} ${x.stat.elementName}`:''}`;$('#gdBody').innerHTML=`<div class="gearbigicon">${x.icon||'⚙️'}</div><div class="gearstatlist">${gearDetailText(x)}</div>${specialEffectHtml(x)}<div class="fusionhint">🔗 Dung hợp: cần <b>3 món giống hệt</b> (cùng loại, phẩm chất, ⭐ và nguyên tố) trong kho. Hiện có <b>${matches.length}/3</b> món.${(x.stars||1)>=5?' Đã đạt ⭐5 tối đa.':canFuse?' Có thể dung hợp ngay.':' Chưa đủ nguyên liệu.'}</div>`;$('#gdActions').innerHTML=`<button class="danger" onclick="unequipItem('${slot}')">↩️ Tháo đồ</button><button class="fusion" ${canFuse?'':'disabled style="opacity:.45;cursor:not-allowed"'} onclick="fuseEquipped('${slot}')">🔗 Dung hợp ${canFuse?'(3 món)':'(cần 3 món)'}</button>`;$('#gearDetailModal').classList.add('show')}
+function closeGearDetail(){$('#gearDetailModal').classList.remove('show')}
+function unequipItem(slot){const x=game.equipped[slot];if(!x)return;game.bag.push(x);game.equipped[slot]=null;closeGearDetail();renderInv();stats();equipCards();wallet();toast('↩️ Đã tháo '+x.name)}
+function fuseEquipped(slot){const target=game.equipped[slot];if(!target)return;const matches=matchingFusionItems(target);if((target.stars||1)>=5||matches.length<3){toast('🔗 Cần đúng 3 món giống hệt để dung hợp!');return}const take=matches.slice(0,3).sort((a,b)=>b.i-a.i);take.forEach(o=>game.bag.splice(o.i,1));target.stars=(target.stars||1)+1;const scale=1.12;const st=target.stat||{};['hp','dmg','def','crit','critDmg','dodge','hpPct','atkPct','defPct','dropPct','moneyPct','elementDmg'].forEach(k=>{if(typeof st[k]==='number'&&st[k]!==0)st[k]=Number((st[k]*scale).toFixed(1));});if(st.elements)Object.keys(st.elements).forEach(k=>st.elements[k]=Number((st.elements[k]*scale).toFixed(1)));toast(`🔗 Dung hợp thành công! ${target.name} ⭐${target.stars}`);renderInv();stats();equipCards();wallet();openEquippedDetail(slot)}
+window.openEquippedDetail=openEquippedDetail;window.closeGearDetail=closeGearDetail;window.unequipItem=unequipItem;window.fuseEquipped=fuseEquipped;
+function openVault(slot){game.vaultFilter=slot;let info=slotInfo[slot];$('#vaultTitle').textContent=info[0]+' Rương '+info[1];$('#vaultHint').textContent=slot==='other'?'Chỉ hiện đồ khác như rương trang bị và vật phẩm. Bấm “Mở rương” để nhận trang bị.':'Chỉ hiện '+info[1].toLowerCase()+'. Bấm “Trang bị” để mặc món đồ.';renderInv();show('bagScreen')}
+function equipItem(idx){let x=game.bag[idx];if(!x||!x.slot)return;let old=game.equipped[x.slot];game.equipped[x.slot]=x;game.bag.splice(idx,1);if(old)game.bag.push(old);toast('⚙️ Đã trang bị '+x.name);renderInv();stats();equipCards();wallet()}
+function formatRemaining(ts){const ms=Math.max(0,Number(ts)-Date.now());const total=Math.ceil(ms/1000);const h=Math.floor(total/3600),m=Math.floor((total%3600)/60),sec=total%60;return `${h}h ${String(m).padStart(2,'0')}m ${String(sec).padStart(2,'0')}s`;}
+function renderInv(){
+  cleanupExpiredItems();
+  let e=$('#inv');
+  let list=game.bag.map((x,i)=>({x,i})).filter(o=>!game.vaultFilter||o.x.slot===game.vaultFilter);
+  $('#bagCount2').textContent=game.bag.length;
+  if(!list.length){e.innerHTML='<p class="muted">Rương này chưa có món phù hợp.</p>';return}
+  e.innerHTML=list.map(o=>{
+    let x=o.x;
+    if(x.chest){
+      return `<div class="gearcard clickable" onclick="openBagItemDetail(${o.i})">
+        <b>${x.icon||'🎁'} Rương trang bị</b><br>
+        <small>🎁 Bấm để mở rương</small>
+        <button class="mode" onclick="event.stopPropagation();openChest(${o.i})">🎁 Mở rương</button>
+      </div>`;
+    }
+    if(x.heal){
+      return `<div class="gearcard clickable">
+        <b>${x.icon||'🧪'} ${x.name}</b><br>
+        <small>❤️ Hồi ${Math.round(x.heal*100)}% HP</small>
+        <div class="muted" style="margin-top:6px">Dùng trong Balo khi đang chiến đấu.</div>
+      </div>`;
+    }
+    return `<div class="gearcard clickable" onclick="openBagItemDetail(${o.i})">
+      <b class="${x.cls}">${x.icon||x.ri} ${x.name}</b><br>
+      <small>⭐${x.stars||1} • ${x.rar}${x.stat&&x.stat.element?' • '+x.stat.elementIcon+' '+x.stat.elementName:''}</small><br>
+      <small>${itemText(x)}</small>${specialEffectHtml(x)}${x.expiresAt?`<div class="muted" style="margin-top:5px">⏳ Dùng thử 5 giờ • Còn <b>${formatRemaining(x.expiresAt)}</b></div>`:''}
+      <button class="mode" onclick="event.stopPropagation();openBagItemDetail(${o.i})">🔍 Xem chỉ số</button>
+    </div>`;
+  }).join('');
+}
+function inv(){game.vaultFilter=null;$('#vaultTitle').textContent='🎒 Tất cả trang bị';$('#vaultHint').textContent='Bấm vào ô mũ, áo, vũ khí, quần, giày hoặc 🎁 Đồ khác để mở rương lọc riêng.';renderInv();stats();equipCards();show('bagScreen')}
+$('#back').onclick=()=>show(game.online?'onlineLobby':(game.boss?'home':'campaign'));$('#bag').onclick=inv;$('#bb').onclick=()=>show(game.online?'onlineLobby':'home');$('#saveName').onclick=()=>{
+  let n=$('#nameInput').value.trim().replace(/\s+/g,' ');
+  if(!n){toast('✏️ Tên không được để trống!');return}
+  if(n.length<2){toast('✏️ Tên cần ít nhất 2 ký tự!');return}
+  n=n.slice(0,16);
+  if(n===game.name){saveProfile();wallet();toast('✅ Đã lưu nhân vật '+game.name);return}
+  saveProfile();
+  const oldName=game.name;
+  if(loadProfile(n)){
+    game.name=n;
+    toast('👤 Đã chuyển sang nhân vật '+n+' • tải lại toàn bộ đồ, tiền và tiến độ');
+  }else{
+    game.name=n;
+    game.money=100;game.dia=0;game.bag=[];game.backpack=[];
+    game.equipped={helmet:null,shirt:null,weapon:null,pants:null,shoes:null,special:null};
+    game.characterRarity='rarW';
+    game.done=[];game.stage=1;game.level=1;game.xp=0;game.levelXp=100;game.superBossIndex=1;game.superEffects=[];game.bossShield=true;game.redeemedCodes=[];game.beginnerChestBought=0;
+    saveProfile();
+    toast('👤 Đã tạo nhân vật mới: '+n);
+  }
+  localStorage.setItem('gun2_name',game.name);
+  wallet();renderInv();stats();equipCards();
+};
+function transferBackpackToVault(){game.backpack.forEach(x=>game.bag.push(x));game.backpack=[];game.loot=[];wallet();}
+$('#next').onclick=()=>{
+  transferBackpackToVault();
+  if(game.storyBattle && game.stage){
+    if(game.online){toast('🏆 Hoàn thành Màn '+game.stage+'!');show('onlineLobby');}
+    else {if(!game.done.includes(game.stage))game.done.push(game.stage);wallet();renderCampaign();show('campaign');}
+    game.storyBattle=false;game.stageWave=1;
+  }else{wallet();show(game.online?'onlineLobby':'home')}
+};
+$('#story').onclick=openCampaign;
+$('#super').onclick=openBossSetup;
+$('#bossBack').onclick=()=>show('home');
+$('#effectConfirm').onclick=()=>start(true);
+$('#campaignBack').onclick=()=>show('home');
+$('#shopOpen').onclick=()=>{$('#shopModal').classList.add('show');renderShop();autoShopRefresh()};
+$('#shopClose').onclick=()=>$('#shopModal').classList.remove('show');$('#gearDetailClose').onclick=closeGearDetail;$('#backpackOpen').onclick=openBackpack;$('#backpackClose').onclick=closeBackpack;$('#offlineMode').onclick=()=>{game.online=false;show('home');};$('#onlineMode').onclick=openOnline;$('#roomCreate').onclick=createRoom;$('#roomJoin').onclick=joinRoom;$('#onlineBack').onclick=()=>{if(confirm('🚪 Bạn có chắc muốn rời phòng không?\n\nBạn sẽ thoát khỏi phòng online hiện tại?'))leaveOnline()};$('#voteStory').onclick=()=>voteMode('story');$('#voteBoss').onclick=()=>voteMode('boss');$('#onlineBossEffects').onclick=chooseOnlineEffects;$('#onlineBag').onclick=inv;$('#onlineShop').onclick=()=>{$('#shopModal').classList.add('show');renderShop();autoShopRefresh()};$('#shopRefresh').onclick=manualShopRefresh;$('#redeemCodeBtn').onclick=redeemCode;$('#redeemCodeInput').onkeydown=e=>{if(e.key==='Enter')redeemCode()};
+setInterval(autoShopRefresh,1000);setInterval(()=>{cleanupExpiredItems();renderInv();},1000);cleanupExpiredItems();autoShopRefresh();wallet();window.renderShop=renderShop;window.equipItem=equipItem;window.openBagItemDetail=openBagItemDetail;window.sellItem=sellItem;window.openShopItemDetail=openShopItemDetail;window.buyShop=buyShop;window.closeGearDetail=closeGearDetail;})();
+</script></body></html>
